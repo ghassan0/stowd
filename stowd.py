@@ -24,16 +24,14 @@ def file_path(string):
     raise FileNotFoundError(string)
 
 
-def is_boolean(string):
+def is_bool(string):
     """Check if a string represents a boolean"""
-
     bools = ["true", "false", "yes", "no", "on", "off", "1", "0"]
     return string.lower() in bools
 
 
 def getargs():
     """Parses and returns CLI arguments."""
-
     parser = argparse.ArgumentParser(
         description="Symlink dotfiles into their respective directories using \
                 `stow`."
@@ -86,6 +84,7 @@ def getargs():
         "--platform",
         dest="platform",
         nargs=1,
+        type=str,
         metavar="NAME",
         help="platform(section) in config to use",
     )
@@ -106,6 +105,20 @@ def getargs():
         type=dir_path,
         metavar="PATH",
         help="path to dotfiles directory",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        dest="verbose",
+        action="store_true",
+        help="show verbose output",
+    )
+    parser.add_argument(
+        "-r",
+        "--root",
+        dest="root",
+        action="store_true",
+        help="allow stowing to root directory",
     )
 
     args = parser.parse_args()
@@ -169,36 +182,7 @@ def get_platform(config, args_platform):
     return platform
 
 
-def stow(target_dir, dotfiles_dir, app, cmd):
-    """Runs the `stow` command."""
-
-    app_path = dotfiles_dir + "/" + app
-    if not isdir(expanduser(app_path)):
-        print(app_path + " directory not found.")
-    else:
-        if cmd == "stow":
-            flag = "restow"
-        elif cmd == "unstow":
-            flag = "delete"
-        command = [
-            "stow",
-            "--no-folding",
-            "--dir=" + expanduser(dotfiles_dir),
-            "--target=" + expanduser(target_dir),
-            "--" + flag,
-            app,
-        ]
-        if target_dir == "/":
-            command.insert(0, "sudo")
-        output = subprocess.run(
-            command,
-            check=True,
-        )
-        if not output.returncode:
-            print("[" + target_dir + "] " + cmd + "d " + app)
-
-
-def get_settings(config, platform):
+def get_config_settings(config, platform):
     """Return the settings from the config file"""
 
     if platform + "-settings" in config:
@@ -211,28 +195,122 @@ def get_settings(config, platform):
     return settings
 
 
-def get_setting(arg, settings, setting):
+def get_setting(arg, config_settings, setting):
     """Return the setting [arg > config > default]"""
 
-    if arg is not None:
-        return arg[0]
-
     if setting == "dotfiles_dir":
-        value = dir_path(settings.get(setting, "~/dotfiles"))
-    elif setting == "quiet":
-        value = settings.getboolean(setting, False)
-    elif setting == "root":
-        value = settings.getboolean(setting, True)
+        if arg is not None:
+            return arg
+        value = dir_path(config_settings.get(setting, "~/dotfiles"))
+    elif setting in ["verbose", "root"]:
+        if arg:
+            return arg
+        value = config_settings.getboolean(setting, False)
     else:
         value = None
 
     return value
 
 
+def get_settings(args, config_settings):
+    """Return all settings."""
+
+    settings = {}
+    settings["dotfiles_dir"] = get_setting(
+        args.dotfiles_dir, config_settings, "dotfiles_dir"
+    )
+    settings["verbose"] = get_setting(args.verbose, config_settings, "verbose")
+    settings["root"] = get_setting(args.root, config_settings, "root")
+
+    return settings
+
+
+def stow_counter(target_dir, cmd, counter):
+    """Update counter for stow/unstow."""
+
+    if target_dir == "~" and cmd == "stow":
+        counter[0] += 1
+    elif target_dir == "~" and cmd == "unstow":
+        counter[1] += 1
+    elif target_dir == "/" and cmd == "stow":
+        counter[2] += 1
+    elif target_dir == "/" and cmd == "unstow":
+        counter[3] += 1
+
+
+def stow(target_dir, cmd, app, counter, settings):
+    """Runs the `stow` command."""
+
+    app_path = settings["dotfiles_dir"] + "/" + app
+    if not isdir(expanduser(app_path)):
+        print(app_path + " directory not found.")
+    else:
+        if cmd == "stow":
+            flag = "restow"
+        elif cmd == "unstow":
+            flag = "delete"
+        command = [
+            "stow",
+            "--no-folding",
+            "--dir=" + expanduser(settings["dotfiles_dir"]),
+            "--target=" + expanduser(target_dir),
+            "--" + flag,
+            app,
+        ]
+        if target_dir == "/":
+            command.insert(0, "sudo")
+        output = subprocess.run(
+            command,
+            check=True,
+        )
+        if not output.returncode:
+            if settings["verbose"]:
+                print("[" + target_dir + "] " + cmd + "d " + app)
+            stow_counter(target_dir, cmd, counter)
+
+
+def stow_from_args(args, counter, settings):
+    """Stow from CLI args."""
+
+    for app in args.stow:
+        stow("~", "stow", app, counter, settings)
+    for app in args.unstow:
+        stow("~", "unstow", app, counter, settings)
+    for app in args.stow_root:
+        stow("/", "stow", app, counter, settings)
+    for app in args.unstow_root:
+        stow("/", "unstow", app, counter, settings)
+
+
+def stow_from_config(config, platform, counter, settings):
+    """Stow from config file."""
+
+    platform_home = config[platform]
+    for app in platform_home:
+        if not is_bool(platform_home.get(app)):
+            if settings["verbose"]:
+                print("[~] ingnored " + app)
+            counter[4] += 1
+        elif platform_home.getboolean(app):
+            stow("~", "stow", app, counter, settings)
+        else:
+            stow("~", "unstow", app, counter, settings)
+    if platform + "-root" in config and settings["root"]:
+        platform_root = config[platform + "-root"]
+        for app in platform_root:
+            if not is_bool(platform_root.get(app)):
+                if settings["verbose"]:
+                    print("[/] ingnored " + app)
+                counter[4] += 1
+            elif platform_root.getboolean(app):
+                stow("/", "stow", app, counter, settings)
+            else:
+                stow("/", "unstow", app, counter, settings)
+
+
 def print_results(counter):
     """Print results."""
 
-    print("Done.")
     if counter[0] > 0:
         print("Total stowd to '~': " + str(counter[0]))
     if counter[1] > 0:
@@ -243,51 +321,8 @@ def print_results(counter):
         print("Total unstowd from '/': " + str(counter[3]))
     if counter[4] > 0:
         print("Total ingnored: " + str(counter[4]))
-
-
-def stow_from_args(args, dotfiles_dir, counter):
-    """Stow from CLI args."""
-
-    for app in args.stow:
-        stow("~", dotfiles_dir, app, "stow")
-        counter[0] += 1
-    for app in args.unstow:
-        stow("~", dotfiles_dir, app, "unstow")
-        counter[1] += 1
-    for app in args.stow_root:
-        stow("/", dotfiles_dir, app, "stow")
-        counter[2] += 1
-    for app in args.unstow_root:
-        stow("/", dotfiles_dir, app, "unstow")
-        counter[3] += 1
-
-
-def stow_from_config(config, platform, dotfiles_dir, counter):
-    """Stow from config file."""
-
-    platform_home = config[platform]
-    for app in platform_home:
-        if not is_boolean(platform_home.get(app)):
-            print("[~] ingnored " + app)
-            counter[4] += 1
-        elif platform_home.getboolean(app):
-            stow("~", dotfiles_dir, app, "stow")
-            counter[0] += 1
-        else:
-            stow("~", dotfiles_dir, app, "unstow")
-            counter[1] += 1
-    if platform + "-root" in config:
-        platform_root = config[platform + "-root"]
-        for app in platform_root:
-            if not is_boolean(platform_root.get(app)):
-                print("[/] ingnored " + app)
-                counter[4] += 1
-            elif platform_root.getboolean(app):
-                stow("/", dotfiles_dir, app, "stow")
-                counter[2] += 1
-            else:
-                stow("/", dotfiles_dir, app, "unstow")
-                counter[3] += 1
+    if sum(counter) == 0:
+        print("Nothing done")
 
 
 def main() -> None:
@@ -296,16 +331,16 @@ def main() -> None:
     args = getargs()
     config = get_config(args.config_file, args.dotfiles_dir)
     platform = get_platform(config, args.platform)
-    settings = get_settings(config, platform)
+    config_settings = get_config_settings(config, platform)
 
-    dotfiles_dir = get_setting(args.dotfiles_dir, settings, "dotfiles_dir")
+    settings = get_settings(args, config_settings)
 
     counter = [0] * 5
 
-    stow_from_args(args, dotfiles_dir, counter)
+    stow_from_args(args, counter, settings)
 
     if sum(counter) == 0 or args.platform is not None:
-        stow_from_config(config, platform, dotfiles_dir, counter)
+        stow_from_config(config, platform, counter, settings)
 
     print_results(counter)
 
