@@ -24,6 +24,13 @@ def file_path(string):
     raise FileNotFoundError(string)
 
 
+def is_boolean(string):
+    """Check if a string represents a boolean"""
+
+    bools = ["true", "false", "yes", "no", "on", "off", "1", "0"]
+    return string.lower() in bools
+
+
 def getargs():
     """Parses and returns CLI arguments."""
 
@@ -140,25 +147,6 @@ def get_config(args_config_file, args_dotfiles_dir):
     return config
 
 
-def get_dotfiles_dir(args_dotfiles_dir, settings):
-    """Returns the dotfiles directory."""
-
-    if args_dotfiles_dir is not None:
-        dotfiles_dir = args_dotfiles_dir[0]
-    else:
-        if "dotfiles_dir" in settings:
-            dotfiles_dir = dir_path(settings["dotfiles_dir"])
-        elif isdir(expanduser("~/dotfiles")):
-            dotfiles_dir = expanduser("~/dotfiles")
-        elif isdir(expanduser("~/.dotfiles")):
-            dotfiles_dir = expanduser("~/.dotfiles")
-        else:
-            print("No dotfiles directory found.")
-            sys.exit(1)
-
-    return dotfiles_dir
-
-
 def get_platform(config, args_platform):
     """Returns specific platform(section) from config."""
 
@@ -178,7 +166,7 @@ def get_platform(config, args_platform):
         print(platform + " section missing in config file")
         sys.exit(1)
 
-    return config[platform]
+    return platform
 
 
 def stow(target_dir, dotfiles_dir, app, cmd):
@@ -210,38 +198,116 @@ def stow(target_dir, dotfiles_dir, app, cmd):
             print("[" + target_dir + "] " + cmd + "d " + app)
 
 
+def get_settings(config, platform):
+    """Return the settings from the config file"""
+
+    if platform + "-settings" in config:
+        settings = config["settings"]
+    elif "settings" in config:
+        settings = config["settings"]
+    else:
+        settings = []
+
+    return settings
+
+
+def get_setting(arg, settings, setting):
+    """Return the setting [arg > config > default]"""
+
+    if arg is not None:
+        return arg[0]
+
+    if setting == "dotfiles_dir":
+        value = dir_path(settings.get(setting, "~/dotfiles"))
+    elif setting == "quiet":
+        value = settings.getboolean(setting, False)
+    elif setting == "root":
+        value = settings.getboolean(setting, True)
+    else:
+        value = None
+
+    return value
+
+
+def print_results(counter):
+    """Print results."""
+
+    print("Done.")
+    if counter[0] > 0:
+        print("Total stowd to '~': " + str(counter[0]))
+    if counter[1] > 0:
+        print("Total unstowd from '~': " + str(counter[1]))
+    if counter[2] > 0:
+        print("Total stowd to '/': " + str(counter[2]))
+    if counter[3] > 0:
+        print("Total unstowd from '/': " + str(counter[3]))
+    if counter[4] > 0:
+        print("Total ingnored: " + str(counter[4]))
+
+
+def stow_from_args(args, dotfiles_dir, counter):
+    """Stow from CLI args."""
+
+    for app in args.stow:
+        stow("~", dotfiles_dir, app, "stow")
+        counter[0] += 1
+    for app in args.unstow:
+        stow("~", dotfiles_dir, app, "unstow")
+        counter[1] += 1
+    for app in args.stow_root:
+        stow("/", dotfiles_dir, app, "stow")
+        counter[2] += 1
+    for app in args.unstow_root:
+        stow("/", dotfiles_dir, app, "unstow")
+        counter[3] += 1
+
+
+def stow_from_config(config, platform, dotfiles_dir, counter):
+    """Stow from config file."""
+
+    platform_home = config[platform]
+    for app in platform_home:
+        if not is_boolean(platform_home.get(app)):
+            print("[~] ingnored " + app)
+            counter[4] += 1
+        elif platform_home.getboolean(app):
+            stow("~", dotfiles_dir, app, "stow")
+            counter[0] += 1
+        else:
+            stow("~", dotfiles_dir, app, "unstow")
+            counter[1] += 1
+    if platform + "-root" in config:
+        platform_root = config[platform + "-root"]
+        for app in platform_root:
+            if not is_boolean(platform_root.get(app)):
+                print("[/] ingnored " + app)
+                counter[4] += 1
+            elif platform_root.getboolean(app):
+                stow("/", dotfiles_dir, app, "stow")
+                counter[2] += 1
+            else:
+                stow("/", dotfiles_dir, app, "unstow")
+                counter[3] += 1
+
+
 def main() -> None:
     """Stow/unstow dotfiles to home/root directories."""
 
     args = getargs()
     config = get_config(args.config_file, args.dotfiles_dir)
+    platform = get_platform(config, args.platform)
+    settings = get_settings(config, platform)
 
-    if "settings" in config:
-        settings = config["settings"]
-    else:
-        settings = []
-    dotfiles_dir = get_dotfiles_dir(args.dotfiles_dir, settings)
+    dotfiles_dir = get_setting(args.dotfiles_dir, settings, "dotfiles_dir")
 
-    for app in args.stow:
-        stow("~", dotfiles_dir, app, "stow")
-    for app in args.unstow:
-        stow("~", dotfiles_dir, app, "unstow")
-    for app in args.stow_root:
-        stow("/", dotfiles_dir, app, "stow")
-    for app in args.unstow_root:
-        stow("/", dotfiles_dir, app, "unstow")
+    counter = [0] * 5
 
-    if len(sys.argv) == 1 or args.platform is not None:
-        platform = get_platform(config, args.platform)
-        for app in platform:
-            if platform[app] == "stow":
-                stow("~", dotfiles_dir, app, "stow")
-            elif platform[app] == "unstow":
-                stow("~", dotfiles_dir, app, "unstow")
-            elif platform[app] == "stow-root":
-                stow("/", dotfiles_dir, app, "stow")
-            elif platform[app] == "unstow-root":
-                stow("/", dotfiles_dir, app, "unstow")
+    stow_from_args(args, dotfiles_dir, counter)
+
+    if sum(counter) == 0 or args.platform is not None:
+        stow_from_config(config, platform, dotfiles_dir, counter)
+
+    print_results(counter)
 
 
 if __name__ == "__main__":
