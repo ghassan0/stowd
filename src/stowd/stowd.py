@@ -9,6 +9,8 @@ import sys
 from os import environ
 from os.path import expanduser, isdir, isfile
 
+CONFIG_FILE = "stowd.cfg"
+
 
 def dir_path(string):
     """Ensure directory exists."""
@@ -95,7 +97,7 @@ def getargs():
         nargs=1,
         type=file_path,
         metavar="PATH",
-        help="path to config file (stowd.ini)",
+        help="path to config file (" + CONFIG_FILE + ")",
     )
     parser.add_argument(
         "-d",
@@ -127,31 +129,36 @@ def getargs():
 
 def get_config(args_config_file, args_dotfiles_dir):
     """Reads and returns config from file."""
-
     if args_config_file is not None:
         config_file = args_config_file[0]
     else:
         if args_dotfiles_dir is not None:
             dotfiles_dir = args_dotfiles_dir[0]
-            if isfile(dotfiles_dir + "/stowd/.config/stowd/stowd.ini"):
-                config_file = dotfiles_dir + "/stowd/.config/stowd/stowd.ini"
-            elif isfile(dotfiles_dir + "/stowd/.stowd.ini"):
-                config_file = dotfiles_dir + "/stowd/.stowd.ini"
-        if isfile(expanduser("~/.config/stowd/stowd.ini")):
-            config_file = expanduser("~/.config/stowd/stowd.ini")
-        elif isfile(expanduser("~/.stowd.ini")):
-            config_file = expanduser("~/.stowd.ini")
-        elif isfile(expanduser("~/dotfiles/stowd/.config/stowd/stowd.ini")):
-            config_file = expanduser("~/dotfiles/stowd/.config/stowd/stowd.ini")
-        elif isfile(expanduser("~/dotfiles/stowd/.stowd.ini")):
-            config_file = expanduser("~/dotfiles/stowd/.stowd.ini")
-        elif isfile(expanduser("~/.dotfiles/stowd/.config/stowd/stowd.ini")):
-            config_file = expanduser("~/.dotfiles/stowd/.config/stowd/stowd.ini")
-        elif isfile(expanduser("~/.dotfiles/stowd/.stowd.ini")):
-            config_file = expanduser("~/.dotfiles/stowd/.stowd.ini")
+            if isfile(dotfiles_dir + "/stowd/.config/stowd/" + CONFIG_FILE):
+                config_file = dotfiles_dir + "/stowd/.config/stowd/" + CONFIG_FILE
+            elif isfile(dotfiles_dir + "/stowd/." + CONFIG_FILE):
+                config_file = dotfiles_dir + "/stowd/." + CONFIG_FILE
+        if isfile(expanduser("~/.config/stowd/" + CONFIG_FILE)):
+            config_file = expanduser("~/.config/stowd/" + CONFIG_FILE)
+        elif isfile(expanduser("~/." + CONFIG_FILE)):
+            config_file = expanduser("~/." + CONFIG_FILE)
+        elif isfile(expanduser("~/dotfiles/stowd/.config/stowd/" + CONFIG_FILE)):
+            config_file = expanduser("~/dotfiles/stowd/.config/stowd/" + CONFIG_FILE)
+        elif isfile(expanduser("~/dotfiles/stowd/." + CONFIG_FILE)):
+            config_file = expanduser("~/dotfiles/stowd/." + CONFIG_FILE)
+        elif isfile(expanduser("~/.dotfiles/stowd/.config/stowd/" + CONFIG_FILE)):
+            config_file = expanduser("~/.dotfiles/stowd/.config/stowd/" + CONFIG_FILE)
+        elif isfile(expanduser("~/.dotfiles/stowd/." + CONFIG_FILE)):
+            config_file = expanduser("~/.dotfiles/stowd/." + CONFIG_FILE)
 
     if "config_file" not in locals() or not isfile(config_file):
-        print("Config file not found in `~/.config/stowd/stowd.ini` or `~/.stowd.ini`")
+        print(
+            "Config file not found in `~/.config/stowd/"
+            + CONFIG_FILE
+            + "` or `~/."
+            + CONFIG_FILE
+            + "`"
+        )
         sys.exit(1)
 
     config = configparser.ConfigParser()
@@ -162,7 +169,6 @@ def get_config(args_config_file, args_dotfiles_dir):
 
 def get_platform(config, args_platform):
     """Returns specific platform(section) from config."""
-
     if args_platform is not None:
         platform = args_platform[0]
     else:
@@ -184,7 +190,6 @@ def get_platform(config, args_platform):
 
 def get_config_settings(config, platform):
     """Return the settings from the config file"""
-
     if platform + "-settings" in config:
         settings = config["settings"]
     elif "settings" in config:
@@ -197,7 +202,6 @@ def get_config_settings(config, platform):
 
 def get_setting(arg, config_settings, setting):
     """Return the setting [arg > config > default]"""
-
     if setting == "dotfiles_dir":
         if arg is not None:
             return arg
@@ -214,7 +218,6 @@ def get_setting(arg, config_settings, setting):
 
 def get_settings(args, config_settings):
     """Return all settings."""
-
     settings = {}
     settings["dotfiles_dir"] = get_setting(
         args.dotfiles_dir, config_settings, "dotfiles_dir"
@@ -227,7 +230,6 @@ def get_settings(args, config_settings):
 
 def stow_counter(target_dir, cmd, counter):
     """Update counter for stow/unstow."""
-
     if target_dir == "~" and cmd == "stow":
         counter[0] += 1
     elif target_dir == "~" and cmd == "unstow":
@@ -240,7 +242,6 @@ def stow_counter(target_dir, cmd, counter):
 
 def stow(target_dir, cmd, app, counter, settings):
     """Runs the `stow` command."""
-
     app_path = settings["dotfiles_dir"] + "/" + app
     if not isdir(expanduser(app_path)):
         print(app_path + " directory not found.")
@@ -271,7 +272,6 @@ def stow(target_dir, cmd, app, counter, settings):
 
 def stow_from_args(args, counter, settings):
     """Stow from CLI args."""
-
     for app in args.stow:
         stow("~", "stow", app, counter, settings)
     for app in args.unstow:
@@ -284,7 +284,6 @@ def stow_from_args(args, counter, settings):
 
 def stow_from_config(config, platform, counter, settings):
     """Stow from config file."""
-
     platform_home = config[platform]
     for app in platform_home:
         if not is_bool(platform_home.get(app)):
@@ -310,7 +309,6 @@ def stow_from_config(config, platform, counter, settings):
 
 def print_results(counter):
     """Print results."""
-
     if counter[0] > 0:
         print("Total stowd to '~': " + str(counter[0]))
     if counter[1] > 0:
@@ -327,7 +325,6 @@ def print_results(counter):
 
 def main() -> None:
     """Stow/unstow dotfiles to home/root directories."""
-
     args = getargs()
     config = get_config(args.config_file, args.dotfiles_dir)
     platform = get_platform(config, args.platform)
