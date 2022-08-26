@@ -1,0 +1,23 @@
+[project]
+name = "stowd"
+version = "0.1.0"
+authors = [
+  { name="Ghassan Alduraibi", email="git@ghassan.dev" },
+]
+description = "Manages symlink for dotfiles using stow"
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/ghassan0/stowd"
+"Bug Tracker" = "https://github.com/ghassan0/stowd/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
