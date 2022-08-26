@@ -8,8 +8,16 @@ import subprocess
 import sys
 from os import environ
 from os.path import expanduser, isdir, isfile
+from shutil import which
 
 CONFIG_FILE = "stowd.cfg"
+
+
+def stow_exists():
+    """Ensure `stow` exists."""
+    if not which('stow'):
+        print('Please install `stow` then try again.')
+        sys.exit(1)
 
 
 def dir_path(string):
@@ -325,6 +333,7 @@ def print_results(counter):
 
 def main() -> None:
     """Stow/unstow dotfiles to home/root directories."""
+    stow_exists()
     args = getargs()
     config = get_config(args.config_file, args.dotfiles_dir)
     platform = get_platform(config, args.platform)
