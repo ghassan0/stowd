@@ -15,9 +15,8 @@ CONFIG_FILE = "stowd.cfg"
 
 def stow_exists():
     """Ensure `stow` exists."""
-    if not which('stow'):
-        print('Please install `stow` then try again.')
-        sys.exit(1)
+    if not which("stow"):
+        Exception("Please install `stow` then try again.")
 
 
 def dir_path(string):
@@ -160,14 +159,13 @@ def get_config(args_config_file, args_dotfiles_dir):
             config_file = expanduser("~/.dotfiles/stowd/." + CONFIG_FILE)
 
     if "config_file" not in locals() or not isfile(config_file):
-        print(
+        raise FileNotFoundError(
             "Config file not found in `~/.config/stowd/"
             + CONFIG_FILE
             + "` or `~/."
             + CONFIG_FILE
             + "`"
         )
-        sys.exit(1)
 
     config = configparser.ConfigParser()
     config.read(config_file)
@@ -190,8 +188,7 @@ def get_platform(config, args_platform):
             platform = "linux"
 
     if platform not in config:
-        print(platform + " section missing in config file")
-        sys.exit(1)
+        Exception(platform + " section missing in config file")
 
     return platform
 
@@ -250,9 +247,9 @@ def stow_counter(target_dir, cmd, counter):
 
 def stow(target_dir, cmd, app, counter, settings):
     """Runs the `stow` command."""
-    app_path = settings["dotfiles_dir"] + "/" + app
-    if not isdir(expanduser(app_path)):
-        print(app_path + " directory not found.")
+    if not isdir(expanduser(settings["dotfiles_dir"] + "/" + app)):
+        print(app + " directory not found in " + settings["dotfiles_dir"] + ".")
+        counter[4] += 1
     else:
         if cmd == "stow":
             flag = "restow"
