@@ -10,17 +10,11 @@ jobs:
     name: Create GitHub Release
     runs-on: ubuntu-latest
     steps:
-      - name: Get version from tag
-        id: lasttag
-        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
-        shell: bash
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Parse Changelog Entry
         id: changelog
         uses: coditory/changelog-parser@v1
-        with:
-          version: version: ${{ steps.lasttag.outputs.version }}
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
