@@ -1,5 +1,5 @@
 """
-Symlink dotfiles into their respective directories using `stow`.
+Easily manage all your dotfiles across your devices.
 """
 
 import argparse
