@@ -4,7 +4,9 @@ Easily manage all your dotfiles across your devices.
 
 ## Motivation
 
-I wanted a simple way to manage all my dotfiles and share them across different devices. Popular options:
+I wanted a simple way to manage all my dotfiles and share them across different devices.
+
+Popular options:
 
 - `stow` - great simple tool but a hassle to manage multiple separate dotfiles
 - `chezmoi` - powerful tool but I didn't want the complexity that came with it
