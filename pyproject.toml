@@ -1,12 +1,12 @@
 [project]
 name = "stowd"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name="Ghassan Alduraibi", email="git@ghassan.dev" },
 ]
 description = "Easily manage all your dotfiles across your devices"
 readme = "README.md"
-license = { file="LICENSE" }
+license = "GPL-3.0-only"
 requires-python = ">=3.7"
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -15,6 +15,9 @@ classifiers = [
     "Operating System :: MacOS",
     "Topic :: Utilities",
 ]
+
+[project.scripts]
+stowd = "stowd.stowd:main"
 
 [project.urls]
 "Homepage" = "https://github.com/ghassan0/stowd"

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2] - 2022-08-28
+
+### Fixed
+
+- Running the stowd command now works
+
 ## [0.0.1] - 2022-08-28
 
 ### Added
@@ -29,5 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New Github actions to auto package and release to Github and PyPI
 - New Github action to update CHANGELOG after release
 
-[unreleased]: https://github.com/ghassan0/stowd/compare/v0.0.1...HEAD
+[unreleased]: https://github.com/ghassan0/stowd/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/ghassan0/stowd/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/ghassan0/stowd/releases/tag/v0.0.1
