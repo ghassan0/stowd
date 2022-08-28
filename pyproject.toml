@@ -1,10 +1,10 @@
 [project]
 name = "stowd"
-version = "0.1.0"
+version = "0.0.1"
 authors = [
   { name="Ghassan Alduraibi", email="git@ghassan.dev" },
 ]
-description = "Manages symlink for dotfiles using stow"
+description = "Easily manage all your dotfiles across your devices"
 readme = "README.md"
 license = { file="LICENSE" }
 requires-python = ">=3.7"
