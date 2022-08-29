@@ -42,8 +42,7 @@ def is_bool(string):
 def getargs():
     """Parses and returns CLI arguments."""
     parser = argparse.ArgumentParser(
-        description="Symlink dotfiles into their respective directories using \
-                `stow`."
+        description="Symlink dotfiles into their respective directories using `stow`."
     )
     parser.add_argument(
         dest="stow",
@@ -121,6 +120,13 @@ def getargs():
         dest="verbose",
         action="store_true",
         help="show verbose output",
+    )
+    parser.add_argument(
+        "-q",
+        "--quiet",
+        dest="quiet",
+        action="store_true",
+        help="supress output",
     )
     parser.add_argument(
         "-r",
@@ -211,7 +217,7 @@ def get_setting(arg, config_settings, setting):
         if arg is not None:
             return arg
         value = dir_path(config_settings.get(setting, "~/dotfiles"))
-    elif setting in ["verbose", "root"]:
+    elif setting in ["verbose", "quiet", "root"]:
         if arg:
             return arg
         value = config_settings.getboolean(setting, False)
@@ -228,6 +234,7 @@ def get_settings(args, config_settings):
         args.dotfiles_dir, config_settings, "dotfiles_dir"
     )
     settings["verbose"] = get_setting(args.verbose, config_settings, "verbose")
+    settings["quiet"] = get_setting(args.quiet, config_settings, "quiet")
     settings["root"] = get_setting(args.root, config_settings, "root")
 
     return settings
@@ -345,7 +352,8 @@ def main() -> None:
     if sum(counter) == 0 or args.platform is not None:
         stow_from_config(config, platform, counter, settings)
 
-    print_results(counter)
+    if not settings["quiet"]:
+        print_results(counter)
 
 
 if __name__ == "__main__":

@@ -27,7 +27,6 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Added
 
-- Add quiet setting and flag to suppress output
 - Add version setting and flag to display current version number
 - Add root-only setting and flag to only run [un]stow-root
 - Add dry-run setting and flag to only display what what happen if run normally
