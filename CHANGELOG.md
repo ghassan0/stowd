@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Created TODO.md inspired by the 'Keep a Changelog' format
+
 ## [0.0.2] - 2022-08-28
 
 ### Fixed
