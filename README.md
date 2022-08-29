@@ -82,8 +82,9 @@ Run `stowd` without arguments to use all the settings from the config file.
   <summary>stowd -h</summary>
 
 ```
-usage: stowd [-h] [-s DIR [DIR ...]] [-S DIR [DIR ...]] [-u DIR [DIR ...]]
-                [-U DIR [DIR ...]] [-p NAME] [-c PATH] [-d PATH] [-v] [-r]
+usage: stowd.py [-h] [-s DIR [DIR ...]] [-S DIR [DIR ...]] [-u DIR [DIR ...]]
+                [-U DIR [DIR ...]] [-r] [-p NAME] [-c PATH] [-d PATH] [-v]
+                [-q] [-n] [-V]
                 [DIR ...]
 
 Symlink dotfiles into their respective directories using `stow`.
@@ -101,6 +102,7 @@ options:
                         unstow dir[s] from the home directory
   -U DIR [DIR ...], --unstow-root DIR [DIR ...]
                         unstow dir[s] from the root directory
+  -r, --root            allow stowing to root directory
   -p NAME, --platform NAME
                         platform(section) in config to use
   -c PATH, --config PATH
@@ -108,7 +110,9 @@ options:
   -d PATH, --dotfiles PATH
                         path to dotfiles directory
   -v, --verbose         show verbose output
-  -r, --root            allow stowing to root directory
+  -q, --quiet           supress output
+  -n, --no, --simulate  simulate run, no filesystem modification
+  -V, --version         show version number
 ```
 
 </details>

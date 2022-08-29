@@ -53,12 +53,3 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
-
-  # update-changelog:
-  #   name: Update CHANGELOG.md following keepachangelog.com
-  #   needs: [build-publish-github, build-publish-pypi]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Update changelog
-  #       uses: thomaseizinger/keep-a-changelog-new-release@v1
