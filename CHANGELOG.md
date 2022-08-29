@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Created TODO.md inspired by the 'Keep a Changelog' format
 - Add quiet setting and flag to suppress regular output
+- Add version flag to display current version number
 
 ## [0.0.2] - 2022-08-28
 

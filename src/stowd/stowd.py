@@ -6,6 +6,7 @@ import argparse
 import configparser
 import subprocess
 import sys
+from importlib.metadata import version
 from os import environ
 from os.path import expanduser, isdir, isfile
 from shutil import which
@@ -135,6 +136,13 @@ def getargs():
         action="store_true",
         help="allow stowing to root directory",
     )
+    parser.add_argument(
+        "-V",
+        "--version",
+        dest="version",
+        action="store_true",
+        help="show version number",
+    )
 
     args = parser.parse_args()
     return args
@@ -179,7 +187,7 @@ def get_config(args_config_file, args_dotfiles_dir):
     return config
 
 
-def get_platform(config, args_platform):
+def get_platform(args_platform, config):
     """Returns specific platform(section) from config."""
     if args_platform is not None:
         platform = args_platform[0]
@@ -337,21 +345,35 @@ def print_results(counter):
 
 def main() -> None:
     """Stow/unstow dotfiles to home/root directories."""
-    stow_exists()
+    # parse command line arguments
     args = getargs()
+
+    # print app version and exit
+    if args.version:
+        print(version("stowd"))
+        sys.exit(0)
+
+    # check if stow exists
+    stow_exists()
+
+    # config file
     config = get_config(args.config_file, args.dotfiles_dir)
-    platform = get_platform(config, args.platform)
+    platform = get_platform(args.platform, config)
     config_settings = get_config_settings(config, platform)
 
+    # set setting from (command line arguments > config file > default)
     settings = get_settings(args, config_settings)
 
     counter = [0] * 5
 
+    # [un]stow[-root] from command line arguments
     stow_from_args(args, counter, settings)
 
+    # [un]stow[-root] from config file
     if sum(counter) == 0 or args.platform is not None:
         stow_from_config(config, platform, counter, settings)
 
+    # print results
     if not settings["quiet"]:
         print_results(counter)
 
