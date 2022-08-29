@@ -143,6 +143,14 @@ def getargs():
         action="store_true",
         help="show version number",
     )
+    parser.add_argument(
+        "-n",
+        "--no",
+        "--simulate",
+        dest="simulate",
+        action="store_true",
+        help="simulate run, no filesystem modification",
+    )
 
     args = parser.parse_args()
     return args
@@ -220,19 +228,17 @@ def get_config_settings(config, platform):
 
 
 def get_setting(arg, config_settings, setting):
-    """Return the setting [arg > config > default]"""
+    """Return the setting (command-line argument > config file > default)"""
     if setting == "dotfiles_dir":
         if arg is not None:
             return arg
-        value = dir_path(config_settings.get(setting, "~/dotfiles"))
-    elif setting in ["verbose", "quiet", "root"]:
+        return dir_path(config_settings.get(setting, "~/dotfiles"))
+    if setting in ["verbose", "quiet", "root", "simulate"]:
         if arg:
             return arg
-        value = config_settings.getboolean(setting, False)
-    else:
-        value = None
+        return config_settings.getboolean(setting, False)
 
-    return value
+    return arg
 
 
 def get_settings(args, config_settings):
@@ -244,6 +250,7 @@ def get_settings(args, config_settings):
     settings["verbose"] = get_setting(args.verbose, config_settings, "verbose")
     settings["quiet"] = get_setting(args.quiet, config_settings, "quiet")
     settings["root"] = get_setting(args.root, config_settings, "root")
+    settings["simulate"] = get_setting(args.simulate, config_settings, "simulate")
 
     return settings
 
@@ -278,16 +285,22 @@ def stow(target_dir, cmd, app, counter, settings):
             "--" + flag,
             app,
         ]
+        if settings["simulate"]:
+            command.insert(1, "--simulate")
         if target_dir == "/":
             command.insert(0, "sudo")
         output = subprocess.run(
             command,
             check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
         if not output.returncode:
             if settings["verbose"]:
                 print("[" + target_dir + "] " + cmd + "d " + app)
             stow_counter(target_dir, cmd, counter)
+        else:
+            print("ERROR: failed to " + cmd + " " + app + "at [" + target_dir + "]")
 
 
 def stow_from_args(args, counter, settings):
@@ -363,6 +376,10 @@ def main() -> None:
 
     # set setting from (command line arguments > config file > default)
     settings = get_settings(args, config_settings)
+
+    # print that we're in Simulation mode
+    if settings["simulate"]:
+        print("Simulation mode: no filesystem modifications")
 
     counter = [0] * 5
 
