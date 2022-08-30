@@ -48,8 +48,9 @@ def getargs():
     parser.add_argument(
         dest="stow",
         nargs="*",
+        action="append",
         default=[],
-        metavar="DIR",
+        metavar="NAME",
         help="stow dir[s] to the home directory",
     )
     parser.add_argument(
@@ -57,8 +58,9 @@ def getargs():
         "--stow",
         dest="stow",
         nargs="+",
+        action="append",
         default=[],
-        metavar="DIR",
+        metavar="NAME",
         help="stow dir[s] to the home directory",
     )
     parser.add_argument(
@@ -66,8 +68,9 @@ def getargs():
         "--stow-root",
         dest="stow_root",
         nargs="+",
+        action="append",
         default=[],
-        metavar="DIR",
+        metavar="NAME",
         help="stow dir[s] to the root directory",
     )
     parser.add_argument(
@@ -75,8 +78,9 @@ def getargs():
         "--unstow",
         dest="unstow",
         nargs="+",
+        action="append",
         default=[],
-        metavar="DIR",
+        metavar="NAME",
         help="unstow dir[s] from the home directory",
     )
     parser.add_argument(
@@ -84,9 +88,17 @@ def getargs():
         "--unstow-root",
         dest="unstow_root",
         nargs="+",
+        action="append",
         default=[],
-        metavar="DIR",
+        metavar="NAME",
         help="unstow dir[s] from the root directory",
+    )
+    parser.add_argument(
+        "-r",
+        "--root",
+        dest="root",
+        action="store_true",
+        help="allow stowing to root directory",
     )
     parser.add_argument(
         "-p",
@@ -94,7 +106,7 @@ def getargs():
         dest="platform",
         nargs=1,
         type=str,
-        metavar="NAME",
+        metavar="PLATFORM",
         help="platform(section) in config to use",
     )
     parser.add_argument(
@@ -103,7 +115,7 @@ def getargs():
         dest="config_file",
         nargs=1,
         type=file_path,
-        metavar="PATH",
+        metavar="FILE",
         help="path to config file (" + CONFIG_FILE + ")",
     )
     parser.add_argument(
@@ -112,7 +124,7 @@ def getargs():
         dest="dotfiles_dir",
         nargs=1,
         type=dir_path,
-        metavar="PATH",
+        metavar="DIR",
         help="path to dotfiles directory",
     )
     parser.add_argument(
@@ -130,11 +142,12 @@ def getargs():
         help="supress output",
     )
     parser.add_argument(
-        "-r",
-        "--root",
-        dest="root",
+        "-n",
+        "--no",
+        "--simulate",
+        dest="simulate",
         action="store_true",
-        help="allow stowing to root directory",
+        help="simulate run, no filesystem modification",
     )
     parser.add_argument(
         "-V",
@@ -142,14 +155,6 @@ def getargs():
         dest="version",
         action="store_true",
         help="show version number",
-    )
-    parser.add_argument(
-        "-n",
-        "--no",
-        "--simulate",
-        dest="simulate",
-        action="store_true",
-        help="simulate run, no filesystem modification",
     )
 
     args = parser.parse_args()
@@ -292,8 +297,8 @@ def stow(target_dir, cmd, app, counter, settings):
         output = subprocess.run(
             command,
             check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
         )
         if not output.returncode:
             if settings["verbose"]:
@@ -305,13 +310,13 @@ def stow(target_dir, cmd, app, counter, settings):
 
 def stow_from_args(args, counter, settings):
     """Stow from CLI args."""
-    for app in args.stow:
+    for app in flatten_list(args.stow):
         stow("~", "stow", app, counter, settings)
-    for app in args.unstow:
+    for app in flatten_list(args.unstow):
         stow("~", "unstow", app, counter, settings)
-    for app in args.stow_root:
+    for app in flatten_list(args.stow_root):
         stow("/", "stow", app, counter, settings)
-    for app in args.unstow_root:
+    for app in flatten_list(args.unstow_root):
         stow("/", "unstow", app, counter, settings)
 
 
@@ -354,6 +359,15 @@ def print_results(counter):
         print("Total ingnored: " + str(counter[4]))
     if sum(counter) == 0:
         print("Nothing done")
+
+
+def flatten_list(list_of_lists):
+    """Print results."""
+    flat_list = []
+    for a_list in list_of_lists:
+        for item in a_list:
+            flat_list.append(item)
+    return flat_list
 
 
 def main() -> None:
