@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Can run the same [un]stow[-root] flag multiple times
 
+### Changed
+
+- Divide codebase into sub-modules
+
 ## [0.1.0] - 2022-08-30
 
 ### Added

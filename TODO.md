@@ -15,7 +15,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Changed
 
-- Divide codebase into sub-modules
+- Clean up sub-modules.
 
 ### Removed
 
