@@ -1,0 +1,33 @@
+"""
+Return all settings (command-line argument > config file > default)
+"""
+
+from ..helpers.path import dir_path
+
+
+def get_setting(arg, config_settings, setting):
+    """Return the setting (command-line argument > config file > default)"""
+    if setting == "dotfiles_dir":
+        if arg is not None:
+            return arg
+        return dir_path(config_settings.get(setting, "~/dotfiles"))
+    if setting in ["verbose", "quiet", "root", "simulate"]:
+        if arg:
+            return arg
+        return config_settings.getboolean(setting, False)
+
+    return arg
+
+
+def get_settings(args, config_settings):
+    """Return all settings."""
+    settings = {}
+    settings["dotfiles_dir"] = get_setting(
+        args.dotfiles_dir, config_settings, "dotfiles_dir"
+    )
+    settings["verbose"] = get_setting(args.verbose, config_settings, "verbose")
+    settings["quiet"] = get_setting(args.quiet, config_settings, "quiet")
+    settings["root"] = get_setting(args.root, config_settings, "root")
+    settings["simulate"] = get_setting(args.simulate, config_settings, "simulate")
+
+    return settings
