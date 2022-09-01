@@ -14,6 +14,6 @@ def print_results(counter):
     if counter[3] > 0:
         print("Total unstowd from '/': " + str(counter[3]))
     if counter[4] > 0:
-        print("Total ingnored: " + str(counter[4]))
+        print("Total ignored: " + str(counter[4]))
     if sum(counter) == 0:
         print("Nothing done")

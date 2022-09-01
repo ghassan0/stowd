@@ -5,8 +5,8 @@ Perform the 'stow' command.
 import subprocess
 from os.path import expanduser, isdir
 
+from ..helpers.boolean import is_bool, is_true
 from ..helpers.flatten_list import flatten_list
-from ..helpers.is_bool import is_bool
 
 
 def stow_counter(target_dir, cmd, counter):
@@ -69,26 +69,24 @@ def stow_from_args(args, counter, settings):
         stow("/", "unstow", app, counter, settings)
 
 
-def stow_from_config(config, platform, counter, settings):
+def stow_from_config(home, root, counter, settings):
     """Stow from config file."""
-    platform_home = config[platform]
-    for app in platform_home:
-        if not is_bool(platform_home.get(app)):
+    for app in home:
+        if not is_bool(home.get(app)):
             if settings["verbose"]:
                 print("[~] ingnored " + app)
             counter[4] += 1
-        elif platform_home.getboolean(app):
+        elif is_true(home.get(app)):
             stow("~", "stow", app, counter, settings)
         else:
             stow("~", "unstow", app, counter, settings)
-    if platform + "-root" in config and settings["root"]:
-        platform_root = config[platform + "-root"]
-        for app in platform_root:
-            if not is_bool(platform_root.get(app)):
+    if settings["root"]:
+        for app in root:
+            if not is_bool(root.get(app)):
                 if settings["verbose"]:
                     print("[/] ingnored " + app)
                 counter[4] += 1
-            elif platform_root.getboolean(app):
+            elif is_true(root.get(app)):
                 stow("/", "stow", app, counter, settings)
             else:
                 stow("/", "unstow", app, counter, settings)

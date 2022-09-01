@@ -2,6 +2,7 @@
 Return all settings (command-line argument > config file > default)
 """
 
+from ..helpers.boolean import is_true
 from ..helpers.path import dir_path
 
 
@@ -14,8 +15,7 @@ def get_setting(arg, config_settings, setting):
     if setting in ["verbose", "quiet", "root", "simulate"]:
         if arg:
             return arg
-        return config_settings.getboolean(setting, False)
-
+        return is_true(config_settings.get(setting, "false"))
     return arg
 
 
@@ -29,5 +29,4 @@ def get_settings(args, config_settings):
     settings["quiet"] = get_setting(args.quiet, config_settings, "quiet")
     settings["root"] = get_setting(args.root, config_settings, "root")
     settings["simulate"] = get_setting(args.simulate, config_settings, "simulate")
-
     return settings

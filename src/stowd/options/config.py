@@ -3,14 +3,15 @@ Parse configuration file (stowd.cfg).
 """
 
 import configparser
-import sys
-from os import environ
 from os.path import expanduser, isfile
 
+from ..helpers.system import get_hostname, get_system
+
 CONFIG_FILE = "stowd.cfg"
+DEFAULT_SECTION = "LEAVE_THIS_SECTION_EMPTY"
 
 
-def get_config(args_config_file, args_dotfiles_dir):
+def get_config_file(args_config_file, args_dotfiles_dir):
     """Reads and returns config from file."""
     if args_config_file is not None:
         config_file = args_config_file[0]
@@ -43,39 +44,36 @@ def get_config(args_config_file, args_dotfiles_dir):
             + "`"
         )
 
-    config = configparser.ConfigParser()
+    config = configparser.ConfigParser(default_section=DEFAULT_SECTION)
     config.read(config_file)
 
     return config
 
 
-def get_platform(args_platform, config):
-    """Returns specific platform(section) from config."""
-    if args_platform is not None:
-        platform = args_platform[0]
-    else:
-        if "TERMUX_VERSION" in environ:
-            platform = "termux"
-        elif sys.platform == "darwin":
-            platform = "osx"
-        # elif sys.platform == "win32":
-        #     platform = "windows"
-        else:
-            platform = "linux"
-
-    if platform not in config:
-        Exception(platform + " section missing in config file")
-
-    return platform
+def get_section(config, section):
+    """Returns specific section from config."""
+    if section in config:
+        return dict(config[section])
+    return {}
 
 
-def get_config_settings(config, platform):
-    """Return the settings from the config file"""
-    if platform + "-settings" in config:
-        settings = config["settings"]
-    elif "settings" in config:
-        settings = config["settings"]
-    else:
-        settings = []
+def get_config_section(config, suffix):
+    """Return the dict of section from the config file"""
+    section_hostname = get_section(config, get_hostname() + "-" + suffix)
+    section_system = get_section(config, get_system() + "-" + suffix)
+    section_all = get_section(config, suffix)
 
-    return settings
+    sections = section_all | section_system | section_hostname
+
+    return sections
+
+
+def get_config(args_config_file, args_dotfiles_dir):
+    """Reads and returns config from file."""
+    config_file = get_config_file(args_config_file, args_dotfiles_dir)
+
+    config = {}
+    config["settings"] = get_config_section(config_file, "settings")
+    config["home"] = get_config_section(config_file, "home")
+    config["root"] = get_config_section(config_file, "root")
+    return config

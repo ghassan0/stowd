@@ -69,15 +69,15 @@ def getargs():
         action="store_true",
         help="allow stowing to root directory",
     )
-    parser.add_argument(
-        "-p",
-        "--platform",
-        dest="platform",
-        nargs=1,
-        type=str,
-        metavar="PLATFORM",
-        help="platform(section) in config to use",
-    )
+    # parser.add_argument(
+    #     "-p",
+    #     "--platform",
+    #     dest="platform",
+    #     nargs=1,
+    #     type=str,
+    #     metavar="PLATFORM",
+    #     help="platform(section) in config to use",
+    # )
     parser.add_argument(
         "-c",
         "--config",

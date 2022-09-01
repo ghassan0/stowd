@@ -11,9 +11,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Can run the same [un]stow[-root] flag multiple times
 
+### Added
+
+- Add platform specific settings
+- Add hostname specific settings, home, and root sections
+
 ### Changed
 
 - Divide codebase into sub-modules
+- Clean up sub-modules.
+- Treat 'settings', 'home', 'root' sections as 'default' sections
+- System specific home section is now '[SYSTEM]-home' instead of just '[SYSTEM]'
+
+### Deprecated
+
+- Removed 'platform' command-line argument for now
 
 ## [0.1.0] - 2022-08-30
 

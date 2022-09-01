@@ -4,7 +4,7 @@ Easily manage all your dotfiles across your devices.
 
 ## Motivation
 
-I wanted a simple way to manage all my dotfiles and share them across different devices.
+I wanted a simple way to manage all [my dotfiles](https://github.com/ghassan0/dotfiles) and share them across different devices.
 
 Popular options:
 
@@ -82,32 +82,30 @@ Run `stowd` without arguments to use all the settings from the config file.
   <summary>stowd -h</summary>
 
 ```
-usage: stowd.py [-h] [-s DIR [DIR ...]] [-S DIR [DIR ...]] [-u DIR [DIR ...]]
-                [-U DIR [DIR ...]] [-r] [-p NAME] [-c PATH] [-d PATH] [-v]
-                [-q] [-n] [-V]
-                [DIR ...]
+usage: stowd [-h] [-s NAME [NAME ...]] [-S NAME [NAME ...]]
+             [-u NAME [NAME ...]] [-U NAME [NAME ...]] [-r] [-c FILE] [-d DIR]
+             [-v] [-q] [-n] [-V]
+             [NAME ...]
 
 Symlink dotfiles into their respective directories using `stow`.
 
 positional arguments:
-  DIR                   stow dir[s] to the home directory
+  NAME                  stow dir[s] to the home directory
 
 options:
   -h, --help            show this help message and exit
-  -s DIR [DIR ...], --stow DIR [DIR ...]
+  -s NAME [NAME ...], --stow NAME [NAME ...]
                         stow dir[s] to the home directory
-  -S DIR [DIR ...], --stow-root DIR [DIR ...]
+  -S NAME [NAME ...], --stow-root NAME [NAME ...]
                         stow dir[s] to the root directory
-  -u DIR [DIR ...], --unstow DIR [DIR ...]
+  -u NAME [NAME ...], --unstow NAME [NAME ...]
                         unstow dir[s] from the home directory
-  -U DIR [DIR ...], --unstow-root DIR [DIR ...]
+  -U NAME [NAME ...], --unstow-root NAME [NAME ...]
                         unstow dir[s] from the root directory
   -r, --root            allow stowing to root directory
-  -p NAME, --platform NAME
-                        platform(section) in config to use
-  -c PATH, --config PATH
+  -c FILE, --config FILE
                         path to config file (stowd.cfg)
-  -d PATH, --dotfiles PATH
+  -d DIR, --dotfiles DIR
                         path to dotfiles directory
   -v, --verbose         show verbose output
   -q, --quiet           supress output
@@ -116,7 +114,3 @@ options:
 ```
 
 </details>
-
-## Examples
-
-Here are my [dotfiles](https://github.com/ghassan0/dotfiles) to give you an idea of how your dotfiles directory would look like.
