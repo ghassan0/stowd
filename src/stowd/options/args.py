@@ -64,10 +64,17 @@ def getargs():
     )
     parser.add_argument(
         "-r",
-        "--root",
-        dest="root",
+        "--root-enable",
+        dest="root_enable",
         action="store_true",
-        help="allow stowing to root directory",
+        help="enable root section in config",
+    )
+    parser.add_argument(
+        "-R",
+        "--root-only",
+        dest="root_only",
+        action="store_true",
+        help="only use root section in config",
     )
     # parser.add_argument(
     #     "-p",

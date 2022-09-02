@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add platform specific settings
 - Add hostname specific settings, home, and root sections
+- Add root-only setting and flag to only run [un]stow-root using the 'root' sections in the config
 
 ### Changed
 
@@ -22,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Clean up sub-modules.
 - Treat 'settings', 'home', 'root' sections as 'default' sections
 - System specific home section is now '[SYSTEM]-home' instead of just '[SYSTEM]'
+- Change 'root' flag and setting to 'root-enable'
+- If app option is set to `false` and its directory doesn't exist, ignore instead of printing it out
+- Add 'stowd' and 'stow' as true values and 'unstowd' and 'unstow' as false values in config
 
 ### Deprecated
 

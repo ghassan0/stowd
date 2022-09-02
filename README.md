@@ -83,8 +83,8 @@ Run `stowd` without arguments to use all the settings from the config file.
 
 ```
 usage: stowd [-h] [-s NAME [NAME ...]] [-S NAME [NAME ...]]
-             [-u NAME [NAME ...]] [-U NAME [NAME ...]] [-r] [-c FILE] [-d DIR]
-             [-v] [-q] [-n] [-V]
+             [-u NAME [NAME ...]] [-U NAME [NAME ...]] [-r] [-R] [-c FILE]
+             [-d DIR] [-v] [-q] [-n] [-V]
              [NAME ...]
 
 Symlink dotfiles into their respective directories using `stow`.
@@ -102,7 +102,8 @@ options:
                         unstow dir[s] from the home directory
   -U NAME [NAME ...], --unstow-root NAME [NAME ...]
                         unstow dir[s] from the root directory
-  -r, --root            allow stowing to root directory
+  -r, --root-enable     enable root section in config
+  -R, --root-only       only use root section in config
   -c FILE, --config FILE
                         path to config file (stowd.cfg)
   -d DIR, --dotfiles DIR

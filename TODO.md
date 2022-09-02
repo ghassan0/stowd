@@ -13,8 +13,8 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Added
 
-- Add root-only setting and flag to only run [un]stow-root
 - Add ignore setting and flag to ignore files ending in this Perl regex.
+- Add 'git clone' functionality to setup dotfiles repo on new device
 
 ### Changed
 

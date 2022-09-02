@@ -12,7 +12,7 @@ def get_setting(arg, config_settings, setting):
         if arg is not None:
             return arg
         return dir_path(config_settings.get(setting, "~/dotfiles"))
-    if setting in ["verbose", "quiet", "root", "simulate"]:
+    if setting in ["verbose", "quiet", "root-enable", "root-only", "simulate"]:
         if arg:
             return arg
         return is_true(config_settings.get(setting, "false"))
@@ -27,6 +27,9 @@ def get_settings(args, config_settings):
     )
     settings["verbose"] = get_setting(args.verbose, config_settings, "verbose")
     settings["quiet"] = get_setting(args.quiet, config_settings, "quiet")
-    settings["root"] = get_setting(args.root, config_settings, "root")
+    settings["root-enable"] = get_setting(
+        args.root_enable, config_settings, "root-enable"
+    )
+    settings["root-only"] = get_setting(args.root_only, config_settings, "root-only")
     settings["simulate"] = get_setting(args.simulate, config_settings, "simulate")
     return settings

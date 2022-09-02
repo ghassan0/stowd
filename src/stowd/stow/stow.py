@@ -24,8 +24,11 @@ def stow_counter(target_dir, cmd, counter):
 def stow(target_dir, cmd, app, counter, settings):
     """Runs the `stow` command."""
     if not isdir(expanduser(settings["dotfiles_dir"] + "/" + app)):
-        print(app + " directory not found in " + settings["dotfiles_dir"] + ".")
+        if cmd == "stow":
+            print(app + " directory not found in " + settings["dotfiles_dir"] + ".")
         counter[4] += 1
+        if settings["verbose"]:
+            print("[" + target_dir + "] ignored " + app)
     else:
         if cmd == "stow":
             flag = "restow"
@@ -71,16 +74,17 @@ def stow_from_args(args, counter, settings):
 
 def stow_from_config(home, root, counter, settings):
     """Stow from config file."""
-    for app in home:
-        if not is_bool(home.get(app)):
-            if settings["verbose"]:
-                print("[~] ingnored " + app)
-            counter[4] += 1
-        elif is_true(home.get(app)):
-            stow("~", "stow", app, counter, settings)
-        else:
-            stow("~", "unstow", app, counter, settings)
-    if settings["root"]:
+    if not settings["root-only"]:
+        for app in home:
+            if not is_bool(home.get(app)):
+                if settings["verbose"]:
+                    print("[~] ingnored " + app)
+                counter[4] += 1
+            elif is_true(home.get(app)):
+                stow("~", "stow", app, counter, settings)
+            else:
+                stow("~", "unstow", app, counter, settings)
+    if settings["root-only"] or settings["root-enable"]:
         for app in root:
             if not is_bool(root.get(app)):
                 if settings["verbose"]:
