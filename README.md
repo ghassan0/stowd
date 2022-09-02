@@ -4,7 +4,7 @@ Easily manage all your dotfiles across your devices.
 
 ## Motivation
 
-I wanted a simple way to manage all [my dotfiles](https://github.com/ghassan0/dotfiles) and share them across different devices.
+I wanted a simple way to manage all [my dotfiles](https://github.com/ghassan0/dotfiles) while having each application isolated so I can easily share them across different devices.
 
 Popular options:
 
@@ -13,6 +13,22 @@ Popular options:
 
 I created `stowd` to fill the gap between `stow` and `chezmoi`.
 It utilizes `stow` and a config file to manage dotfiles of multiple programs on different systems.
+
+## Features
+
+Features:
+
+- Isolate all configs of an application into its own directory.
+- Use same directory structure as can be seen from the `home` (`~`) or `root` (`/`) directories within the application's own directory.
+- Symlink configs so we can edit directly from the dotfiles directory instead of trying to hunt the config files down.
+- Both `home` and `root` configs supported.
+- Hostname-specific, system-specific, and general configs
+- Supports Linux, Termux, and OSX.
+- Non-root installation using `pip`.
+
+Non-features:
+
+- No template files. I want the configs to be portable and not rely on `stowd` or any specific dotfile manager.
 
 ## Installation
 

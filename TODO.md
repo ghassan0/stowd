@@ -15,6 +15,8 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 - Add ignore setting and flag to ignore files ending in this Perl regex.
 - Add 'git clone' functionality to setup dotfiles repo on new device
+- Return `platform` flag functionality and rename to `section`
+- Add flag/setting to disable inheriting from parent section (hostname - system - general)
 
 ### Changed
 
