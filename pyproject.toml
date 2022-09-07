@@ -1,6 +1,6 @@
 [project]
 name = "stowd"
-version = "0.2.0"
+version = "0.2.1"
 authors = [
   { name="Ghassan Alduraibi", email="git@ghassan.dev" },
 ]

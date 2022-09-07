@@ -46,18 +46,20 @@ def stow(target_dir, cmd, app, counter, settings):
             command.insert(1, "--simulate")
         if target_dir == "/":
             command.insert(0, "sudo")
-        output = subprocess.run(
-            command,
-            check=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        if not output.returncode:
+        try:
+            subprocess.run(
+                command,
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        except OSError:
+            print("ERROR: Failed to " + cmd + " " + app + "at [" + target_dir + "]")
+            print("       A real file probably exists at target location.")
+        else:
             if settings["verbose"]:
                 print("[" + target_dir + "] " + cmd + "d " + app)
             stow_counter(target_dir, cmd, counter)
-        else:
-            print("ERROR: failed to " + cmd + " " + app + "at [" + target_dir + "]")
 
 
 def stow_from_args(args, counter, settings):

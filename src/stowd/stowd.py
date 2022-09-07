@@ -42,7 +42,7 @@ def main() -> None:
     stow_from_args(args, counter, settings)
 
     # [un]stow[-root] from config file
-    if sum(counter) == 0 or args.platform is not None:
+    if sum(counter) == 0:
         stow_from_config(config["home"], config["root"], counter, settings)
 
     # print results
