@@ -3,6 +3,7 @@ Parse configuration file (stowd.cfg).
 """
 
 import configparser
+from os import environ
 from os.path import expanduser, isfile
 
 from ..helpers.system import get_hostname, get_system
@@ -13,33 +14,29 @@ DEFAULT_SECTION = "LEAVE_THIS_SECTION_EMPTY"
 
 def get_config_file(args_config_file, args_dotfiles_dir):
     """Reads and returns config from file."""
+    default_config_path = ".config/stowd/" + CONFIG_FILE
     if args_config_file is not None:
         config_file = args_config_file[0]
-    else:
-        if args_dotfiles_dir is not None:
-            dotfiles_dir = args_dotfiles_dir[0]
-            if isfile(dotfiles_dir + "/stowd/.config/stowd/" + CONFIG_FILE):
-                config_file = dotfiles_dir + "/stowd/.config/stowd/" + CONFIG_FILE
-            elif isfile(dotfiles_dir + "/stowd/." + CONFIG_FILE):
-                config_file = dotfiles_dir + "/stowd/." + CONFIG_FILE
-        if isfile(expanduser("~/.config/stowd/" + CONFIG_FILE)):
-            config_file = expanduser("~/.config/stowd/" + CONFIG_FILE)
-        elif isfile(expanduser("~/." + CONFIG_FILE)):
-            config_file = expanduser("~/." + CONFIG_FILE)
-        elif isfile(expanduser("~/dotfiles/stowd/.config/stowd/" + CONFIG_FILE)):
-            config_file = expanduser("~/dotfiles/stowd/.config/stowd/" + CONFIG_FILE)
-        elif isfile(expanduser("~/dotfiles/stowd/." + CONFIG_FILE)):
-            config_file = expanduser("~/dotfiles/stowd/." + CONFIG_FILE)
-        elif isfile(expanduser("~/.dotfiles/stowd/.config/stowd/" + CONFIG_FILE)):
-            config_file = expanduser("~/.dotfiles/stowd/.config/stowd/" + CONFIG_FILE)
-        elif isfile(expanduser("~/.dotfiles/stowd/." + CONFIG_FILE)):
-            config_file = expanduser("~/.dotfiles/stowd/." + CONFIG_FILE)
+    elif "XDG_CONFIG_HOME" in environ and isfile(
+        expanduser(environ["XDG_CONFIG_HOME"] + "/stowd/" + CONFIG_FILE)
+    ):
+        config_file = expanduser(environ["XDG_CONFIG_HOME"] + "/stowd/" + CONFIG_FILE)
+    elif isfile(expanduser("~/" + default_config_path)):
+        config_file = expanduser("~/" + default_config_path)
+    elif args_dotfiles_dir is not None:
+        dotfiles_dir = args_dotfiles_dir[0]
+        if isfile(dotfiles_dir + "/stowd/" + default_config_path):
+            config_file = dotfiles_dir + "/stowd/" + default_config_path
+    elif isfile(expanduser("~/dotfiles/stowd/" + default_config_path)):
+        config_file = expanduser("~/dotfiles/stowd/" + default_config_path)
+    elif isfile(expanduser("~/.dotfiles/stowd/" + default_config_path)):
+        config_file = expanduser("~/.dotfiles/stowd/" + default_config_path)
 
-    if "config_file" not in locals() or not isfile(config_file):
+    if "config_file" not in locals():
         raise FileNotFoundError(
-            "Config file not found in `~/.config/stowd/"
+            "Config file not found in `$XDG_CONFIG_HOME/stowd/"
             + CONFIG_FILE
-            + "` or `~/."
+            + "` or `~/.config/stowd/"
             + CONFIG_FILE
             + "`"
         )

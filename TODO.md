@@ -17,6 +17,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Add 'git clone' functionality to setup dotfiles repo on new device
 - Return `platform` flag functionality and rename to `section`
 - Add flag/setting to disable inheriting from parent section (hostname - system - general)
+- Consider adding Distro section (hostname - distro - system - general)
 
 ### Changed
 

@@ -11,10 +11,16 @@ def get_system():
         platform = "termux"
     elif system() == "Linux":
         platform = "linux"
+    elif system() == "FreeBSD":
+        platform = "freebsd"
+    elif system() == "OpenBSD":
+        platform = "openbsd"
     elif system() == "Darwin":
         platform = "osx"
-    # elif platform.system() == "Windows":
-    #     platform = "windows"
+    elif system().startswith("CYGWIN"):
+        platform = "cygwin"
+    elif system() == "Windows":
+        platform = "windows"
     else:
         platform = "unknown_platform"
 

@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Respect XDG paths for config
+
+### Added
+
+- Add Arch Linux (AUR) install method.
+- Add freebsd, openbsd, and cygwin support.
+
+### Changed
+
+- Config file path precedence order (argument > XDG > `~/.config` > based on `dotfiles-dir` arg > based on `~/dotfiles` > based on `~/.dotfiles`)
+
 ## [0.2.1] - 2022-09-07
 
 ### Fixed

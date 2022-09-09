@@ -23,7 +23,7 @@ Features:
 - Symlink configs so we can edit directly from the dotfiles directory instead of trying to hunt the config files down.
 - Both `home` and `root` configs supported.
 - Hostname-specific, system-specific, and general configs
-- Supports Linux, Termux, and OSX.
+- Supports Linux, Termux, OSX, OpenBSD, FreeBSD, and Cygwin.
 - Non-root installation using `pip`.
 
 Non-features:
@@ -32,9 +32,17 @@ Non-features:
 
 ## Installation
 
-Requirements: `pip` & `stow`
+Requirements: `stow`
 
-`pip install stowd`
+```
+# Cross-Platform (pip)
+pip install stowd
+
+# or
+
+# Arch Linux (AUR)
+yay -S stowd
+```
 
 ## Setup
 

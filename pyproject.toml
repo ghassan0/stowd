@@ -2,7 +2,7 @@
 name = "stowd"
 version = "0.2.1"
 authors = [
-  { name="Ghassan Alduraibi", email="git@ghassan.dev" },
+  { name="Ghassan Alduraibi", email="stowd@ghassan.dev" },
 ]
 description = "Easily manage all your dotfiles across your devices"
 readme = "README.md"
