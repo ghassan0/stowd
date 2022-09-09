@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add Arch Linux (AUR) install method.
 - Add freebsd, openbsd, and cygwin support.
+- Add setting to disable inheriting from parent section (hostname - system - general)
 
 ### Changed
 

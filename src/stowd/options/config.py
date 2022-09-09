@@ -6,6 +6,7 @@ import configparser
 from os import environ
 from os.path import expanduser, isfile
 
+from ..helpers.boolean import is_true
 from ..helpers.system import get_hostname, get_system
 
 CONFIG_FILE = "stowd.cfg"
@@ -14,13 +15,15 @@ DEFAULT_SECTION = "LEAVE_THIS_SECTION_EMPTY"
 
 def get_config_file(args_config_file, args_dotfiles_dir):
     """Reads and returns config from file."""
-    default_config_path = ".config/stowd/" + CONFIG_FILE
+    config_subpath = "/stowd/" + CONFIG_FILE
+    default_config_path = ".config" + config_subpath
+
     if args_config_file is not None:
         config_file = args_config_file[0]
     elif "XDG_CONFIG_HOME" in environ and isfile(
-        expanduser(environ["XDG_CONFIG_HOME"] + "/stowd/" + CONFIG_FILE)
+        expanduser(environ["XDG_CONFIG_HOME"] + config_subpath)
     ):
-        config_file = expanduser(environ["XDG_CONFIG_HOME"] + "/stowd/" + CONFIG_FILE)
+        config_file = expanduser(environ["XDG_CONFIG_HOME"] + config_subpath)
     elif isfile(expanduser("~/" + default_config_path)):
         config_file = expanduser("~/" + default_config_path)
     elif args_dotfiles_dir is not None:
@@ -34,16 +37,15 @@ def get_config_file(args_config_file, args_dotfiles_dir):
 
     if "config_file" not in locals():
         raise FileNotFoundError(
-            "Config file not found in `$XDG_CONFIG_HOME/stowd/"
-            + CONFIG_FILE
-            + "` or `~/.config/stowd/"
-            + CONFIG_FILE
+            "Config file not found in `$XDG_CONFIG_HOME"
+            + config_subpath
+            + "` or `~/"
+            + default_config_path
             + "`"
         )
 
     config = configparser.ConfigParser(default_section=DEFAULT_SECTION)
     config.read(config_file)
-
     return config
 
 
@@ -56,13 +58,24 @@ def get_section(config, section):
 
 def get_config_section(config, suffix):
     """Return the dict of section from the config file"""
+    inherit_flag = "inherit"
+
     section_hostname = get_section(config, get_hostname() + "-" + suffix)
+    settings_hostname = get_section(config, get_hostname() + "-settings")
+    if inherit_flag in settings_hostname and (
+        not is_true(settings_hostname[inherit_flag])
+    ):
+        return section_hostname
+
     section_system = get_section(config, get_system() + "-" + suffix)
-    section_all = get_section(config, suffix)
+    settings_system = get_section(config, get_system() + "-settings")
+    if (inherit_flag in settings_system) and (
+        not is_true(settings_system[inherit_flag])
+    ):
+        return section_system | section_hostname
 
-    sections = section_all | section_system | section_hostname
-
-    return sections
+    section_general = get_section(config, suffix)
+    return section_general | section_system | section_hostname
 
 
 def get_config(args_config_file, args_dotfiles_dir):
