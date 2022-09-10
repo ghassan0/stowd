@@ -1,8 +1,8 @@
 [project]
-name = "stowd"
+name = "doti"
 version = "0.2.1"
 authors = [
-  { name="Ghassan Alduraibi", email="stowd@ghassan.dev" },
+  { name="Ghassan Alduraibi", email="doti@ghassan.dev" },
 ]
 description = "Easily manage all your dotfiles across your devices"
 readme = "README.md"
@@ -17,11 +17,11 @@ classifiers = [
 ]
 
 [project.scripts]
-stowd = "stowd.stowd:main"
+doti = "doti.doti:main"
 
 [project.urls]
-"Homepage" = "https://github.com/ghassan0/stowd"
-"Bug Tracker" = "https://github.com/ghassan0/stowd/issues"
+"Homepage" = "https://github.com/ghassan0/doti"
+"Bug Tracker" = "https://github.com/ghassan0/doti/issues"
 
 [build-system]
 requires = ["hatchling"]

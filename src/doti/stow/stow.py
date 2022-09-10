@@ -64,14 +64,17 @@ def stow(target_dir, cmd, app, counter, settings):
 
 def stow_from_args(args, counter, settings):
     """Stow from CLI args."""
-    for app in flatten_list(args.stow):
-        stow("~", "stow", app, counter, settings)
-    for app in flatten_list(args.unstow):
-        stow("~", "unstow", app, counter, settings)
-    for app in flatten_list(args.stow_root):
-        stow("/", "stow", app, counter, settings)
-    for app in flatten_list(args.unstow_root):
-        stow("/", "unstow", app, counter, settings)
+    if args.root:
+        base_dir = "/"
+    else:
+        base_dir = "~"
+
+    if args.subcmd == "add":
+        for app in flatten_list(args.stow):
+            stow(base_dir, "stow", app, counter, settings)
+    else:
+        for app in flatten_list(args.unstow):
+            stow(base_dir, "unstow", app, counter, settings)
 
 
 def stow_from_config(home, root, counter, settings):

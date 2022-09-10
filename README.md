@@ -1,4 +1,4 @@
-# stowd
+# doti
 
 Easily manage all your dotfiles across your devices.
 
@@ -11,7 +11,7 @@ Popular options:
 - `stow` - great simple tool but a hassle to manage multiple separate dotfiles
 - `chezmoi` - powerful tool but I didn't want the complexity that came with it
 
-I created `stowd` to fill the gap between `stow` and `chezmoi`.
+I created `doti` to fill the gap between `stow` and `chezmoi`.
 It utilizes `stow` and a config file to manage dotfiles of multiple programs on different systems.
 
 ## Features
@@ -28,7 +28,7 @@ Features:
 
 Non-features:
 
-- No template files. I want the configs to be portable and not rely on `stowd` or any specific dotfile manager.
+- No template files. I want the configs to be portable and not rely on `doti` or any specific dotfile manager.
 
 ## Installation
 
@@ -36,12 +36,12 @@ Requirements: `stow`
 
 ```
 # Cross-Platform (pip)
-pip install stowd
+pip install doti
 
 # or
 
 # Arch Linux (AUR)
-yay -S stowd
+yay -S doti
 ```
 
 ## Setup
@@ -54,10 +54,10 @@ Within each sub-directory organize that programs config files as they appear fro
 
 ```
 .
-├── stowd
+├── doti
 │   └── .config
-│       └── stowd
-│           └── stowd.cfg
+│       └── doti
+│           └── doti.cfg
 ├── dircolors
 │   └── .config
 │       └── dircolors
@@ -96,17 +96,17 @@ Within each sub-directory organize that programs config files as they appear fro
 
 ## Configuration
 
-Check the sample [stowd.cfg](sample/stowd.cfg) file for details.
+Check the sample [doti.cfg](sample/doti.cfg) file for details.
 
 ## Usage
 
-Run `stowd` without arguments to use all the settings from the config file.
+Run `doti` without arguments to use all the settings from the config file.
 
 <details>
-  <summary>stowd -h</summary>
+  <summary>doti -h</summary>
 
 ```
-usage: stowd [-h] [-s NAME [NAME ...]] [-S NAME [NAME ...]]
+usage: doti [-h] [-s NAME [NAME ...]] [-S NAME [NAME ...]]
              [-u NAME [NAME ...]] [-U NAME [NAME ...]] [-r] [-R] [-c FILE]
              [-d DIR] [-v] [-q] [-n] [-V]
              [NAME ...]
@@ -129,7 +129,7 @@ options:
   -r, --root-enable     enable root section in config
   -R, --root-only       only use root section in config
   -c FILE, --config FILE
-                        path to config file (stowd.cfg)
+                        path to config file (doti.cfg)
   -d DIR, --dotfiles DIR
                         path to dotfiles directory
   -v, --verbose         show verbose output

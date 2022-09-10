@@ -1,5 +1,5 @@
 """
-Parse configuration file (stowd.cfg).
+Parse configuration file (doti.cfg).
 """
 
 import configparser
@@ -7,16 +7,17 @@ from os import environ
 from os.path import expanduser, isfile
 
 from ..helpers.boolean import is_true
+from ..helpers.metadata import __config_file__, __project__
 from ..helpers.system import get_hostname, get_system
 
-CONFIG_FILE = "stowd.cfg"
 DEFAULT_SECTION = "LEAVE_THIS_SECTION_EMPTY"
 
 
 def get_config_file(args_config_file, args_dotfiles_dir):
     """Reads and returns config from file."""
-    config_subpath = "/stowd/" + CONFIG_FILE
+    config_subpath = "/" + __project__ + "/" + __config_file__
     default_config_path = ".config" + config_subpath
+    dotfiles_config_path = __project__ + "/" + default_config_path
 
     if args_config_file is not None:
         config_file = args_config_file[0]
@@ -28,12 +29,12 @@ def get_config_file(args_config_file, args_dotfiles_dir):
         config_file = expanduser("~/" + default_config_path)
     elif args_dotfiles_dir is not None:
         dotfiles_dir = args_dotfiles_dir[0]
-        if isfile(dotfiles_dir + "/stowd/" + default_config_path):
-            config_file = dotfiles_dir + "/stowd/" + default_config_path
-    elif isfile(expanduser("~/dotfiles/stowd/" + default_config_path)):
-        config_file = expanduser("~/dotfiles/stowd/" + default_config_path)
-    elif isfile(expanduser("~/.dotfiles/stowd/" + default_config_path)):
-        config_file = expanduser("~/.dotfiles/stowd/" + default_config_path)
+        if isfile(dotfiles_dir + "/" + dotfiles_config_path):
+            config_file = dotfiles_dir + "/" + dotfiles_config_path
+    elif isfile(expanduser("~/.dotfiles/" + dotfiles_config_path)):
+        config_file = expanduser("~/.dotfiles/" + dotfiles_config_path)
+    elif isfile(expanduser("~/dotfiles/" + dotfiles_config_path)):
+        config_file = expanduser("~/dotfiles/" + dotfiles_config_path)
 
     if "config_file" not in locals():
         raise FileNotFoundError(

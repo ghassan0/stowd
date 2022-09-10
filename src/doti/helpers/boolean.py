@@ -6,8 +6,9 @@ Check if a string represents a boolean.
 def is_bool(string):
     """Check if a string represents a boolean."""
     bools = [
-        "stowd",
-        "unstowd",
+        "add",
+        "remove",
+        "rm",
         "stow",
         "unstow",
         "true",
@@ -24,5 +25,5 @@ def is_bool(string):
 
 def is_true(string):
     """Check if a string represents a true value."""
-    bools = ["stowd", "stow", "true", "yes", "on", "1"]
+    bools = ["add", "stow", "true", "yes", "on", "1"]
     return string.lower() in bools

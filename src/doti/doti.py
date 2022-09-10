@@ -2,8 +2,8 @@
 Easily manage all your dotfiles across your devices.
 """
 
-import sys
-from importlib.metadata import version
+# import sys
+# from importlib.metadata import version
 
 from .options.args import getargs
 from .options.config import get_config
@@ -17,11 +17,6 @@ def main() -> None:
     """Stow/unstow dotfiles to home/root directories."""
     # parse command line arguments
     args = getargs()
-
-    # print app version and exit
-    if args.version:
-        print(version("stowd"))
-        sys.exit(0)
 
     # check if stow exists
     stow_exists()
@@ -37,12 +32,11 @@ def main() -> None:
         print("Simulation mode: no filesystem modifications")
 
     counter = [0] * 5
-
-    # [un]stow[-root] from command line arguments
-    stow_from_args(args, counter, settings)
-
-    # [un]stow[-root] from config file
-    if sum(counter) == 0:
+    if args.subcmd in ("add", "remove"):
+        # [un]stow[-root] from command line arguments
+        stow_from_args(args, counter, settings)
+    else:
+        # [un]stow[-root] from config file
         stow_from_config(config["home"], config["root"], counter, settings)
 
     # print results

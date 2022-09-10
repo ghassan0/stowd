@@ -13,13 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add Arch Linux (AUR) install method.
-- Add freebsd, openbsd, and cygwin support.
 - Add setting to disable inheriting from parent section (hostname - system - general)
+- Add freebsd, openbsd, and cygwin support.
+- Add Arch Linux (AUR) install method.
 
 ### Changed
 
+- Renamed program to `doti` from `stowd` (github/pypi/aur)
+- Changed `[un]stow[-root]` flags into `add` and `remove` subcommands
 - Config file path precedence order (argument > XDG > `~/.config` > based on `dotfiles-dir` arg > based on `~/dotfiles` > based on `~/.dotfiles`)
+- Replaced 'stowd' and 'unstowd' boolean values to 'add' and 'remove'/'rm' in config
+
+### Deprecated
+
+- Removed `[un]stow[-root]` flags
 
 ## [0.2.1] - 2022-09-07
 

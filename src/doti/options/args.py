@@ -4,9 +4,8 @@ Parse command-line arguments.
 
 import argparse
 
+from ..helpers.metadata import __config_file__, __version__
 from ..helpers.path import dir_path, file_path
-
-CONFIG_FILE = "stowd.cfg"
 
 
 def getargs():
@@ -14,54 +13,14 @@ def getargs():
     parser = argparse.ArgumentParser(
         description="Symlink dotfiles into their respective directories using `stow`."
     )
-    parser.add_argument(
-        dest="stow",
-        nargs="*",
-        action="append",
-        default=[],
-        metavar="NAME",
-        help="stow dir[s] to the home directory",
-    )
-    parser.add_argument(
-        "-s",
-        "--stow",
-        dest="stow",
-        nargs="+",
-        action="append",
-        default=[],
-        metavar="NAME",
-        help="stow dir[s] to the home directory",
-    )
-    parser.add_argument(
-        "-S",
-        "--stow-root",
-        dest="stow_root",
-        nargs="+",
-        action="append",
-        default=[],
-        metavar="NAME",
-        help="stow dir[s] to the root directory",
-    )
-    parser.add_argument(
-        "-u",
-        "--unstow",
-        dest="unstow",
-        nargs="+",
-        action="append",
-        default=[],
-        metavar="NAME",
-        help="unstow dir[s] from the home directory",
-    )
-    parser.add_argument(
-        "-U",
-        "--unstow-root",
-        dest="unstow_root",
-        nargs="+",
-        action="append",
-        default=[],
-        metavar="NAME",
-        help="unstow dir[s] from the root directory",
-    )
+    # parser.add_argument(
+    #     dest="stow",
+    #     nargs="*",
+    #     action="append",
+    #     default=[],
+    #     metavar="NAME",
+    #     help="stow dir[s] to the home directory",
+    # )
     parser.add_argument(
         "-r",
         "--root-enable",
@@ -92,7 +51,7 @@ def getargs():
         nargs=1,
         type=file_path,
         metavar="FILE",
-        help="path to config file (" + CONFIG_FILE + ")",
+        help="path to config file (" + __config_file__ + ")",
     )
     parser.add_argument(
         "-d",
@@ -129,9 +88,43 @@ def getargs():
         "-V",
         "--version",
         dest="version",
-        action="store_true",
+        action="version",
+        version="%(prog)s v" + __version__,
         help="show version number",
     )
 
+    sub_parsers = parser.add_subparsers(dest="subcmd")
+
+    stow_sub_parser = sub_parsers.add_parser("add")
+    stow_sub_parser.add_argument(
+        dest="stow",
+        nargs="+",
+        metavar="NAME",
+        help="stow dir[s] to the home directory",
+    )
+    stow_sub_parser.add_argument(
+        "-r",
+        "--root",
+        dest="root",
+        action="store_true",
+        help="use root dir instead of home",
+    )
+
+    unstow_sub_parser = sub_parsers.add_parser("remove")
+    unstow_sub_parser.add_argument(
+        dest="unstow",
+        nargs="+",
+        metavar="NAME",
+        help="unstow dir[s] from the home directory",
+    )
+    unstow_sub_parser.add_argument(
+        "-r",
+        "--root",
+        dest="root",
+        action="store_true",
+        help="use root dir instead of home",
+    )
+
     args = parser.parse_args()
+    print(args)
     return args

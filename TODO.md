@@ -9,7 +9,8 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Fixed
 
-- Remove requirement for config file if the --dotfiles_dir flag is used along with the --[un]stow[-root] flag(s)
+- Remove requirement for config file if the --dotfiles_dir flag is used along with the add/remove subcommand
+- Handle invalid config file (duplicate sections, etc.)
 
 ### Added
 
@@ -20,6 +21,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 - Consider adding Distro section (hostname - distro - system - general)
 
 ### Changed
+
+- Maybe multiprocessing support for fun/learning
+- Remove `stow` requirement and use python implementation (such as dploy)
 
 ### Removed
 
