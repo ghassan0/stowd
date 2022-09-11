@@ -4,15 +4,14 @@ Easily manage all your dotfiles across your devices.
 
 ## Motivation
 
-I wanted a simple way to manage all [my dotfiles](https://github.com/ghassan0/dotfiles) while having each application isolated so I can easily share them across different devices.
+I wanted a simple way to manage all [my dotfiles](https://github.com/ghassan0/dotfiles) while having each application isolated, so I can easily share them across different devices.
 
 Popular options:
 
 - `stow` - great simple tool but a hassle to manage multiple separate dotfiles
 - `chezmoi` - powerful tool but I didn't want the complexity that came with it
 
-I created `doti` to fill the gap between `stow` and `chezmoi`.
-It utilizes `stow` and a config file to manage dotfiles of multiple programs on different systems.
+I created `doti` to extend the functionality, simplicity, and portability of `stow` with a config file to manage dotfiles of multiple programs on different systems.
 
 ## Features
 
@@ -106,26 +105,16 @@ Run `doti` without arguments to use all the settings from the config file.
   <summary>doti -h</summary>
 
 ```
-usage: doti [-h] [-s NAME [NAME ...]] [-S NAME [NAME ...]]
-             [-u NAME [NAME ...]] [-U NAME [NAME ...]] [-r] [-R] [-c FILE]
-             [-d DIR] [-v] [-q] [-n] [-V]
-             [NAME ...]
+usage: doti [-h] [-r] [-R] [-c FILE] [-d DIR] [-v] [-q] [-n] [-V]
+            {add,remove} ...
 
 Symlink dotfiles into their respective directories using `stow`.
 
 positional arguments:
-  NAME                  stow dir[s] to the home directory
+  {add,remove}
 
 options:
   -h, --help            show this help message and exit
-  -s NAME [NAME ...], --stow NAME [NAME ...]
-                        stow dir[s] to the home directory
-  -S NAME [NAME ...], --stow-root NAME [NAME ...]
-                        stow dir[s] to the root directory
-  -u NAME [NAME ...], --unstow NAME [NAME ...]
-                        unstow dir[s] from the home directory
-  -U NAME [NAME ...], --unstow-root NAME [NAME ...]
-                        unstow dir[s] from the root directory
   -r, --root-enable     enable root section in config
   -R, --root-only       only use root section in config
   -c FILE, --config FILE
@@ -136,6 +125,40 @@ options:
   -q, --quiet           supress output
   -n, --no, --simulate  simulate run, no filesystem modification
   -V, --version         show version number
+```
+
+</details>
+
+<details>
+  <summary>doti add -h</summary>
+
+```
+usage: doti add [-h] [-r] NAME [NAME ...]
+
+positional arguments:
+  NAME        stow dir[s] to the home directory
+
+options:
+  -h, --help  show this help message and exit
+  -r, --root  use root dir instead of home
+```
+
+</details>
+
+</details>
+
+<details>
+  <summary>doti remove -h</summary>
+
+```
+usage: doti remove [-h] [-r] NAME [NAME ...]
+
+positional arguments:
+  NAME        unstow dir[s] from the home directory
+
+options:
+  -h, --help  show this help message and exit
+  -r, --root  use root dir instead of home
 ```
 
 </details>
