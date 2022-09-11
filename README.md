@@ -136,7 +136,7 @@ options:
 usage: doti add [-h] [-r] NAME [NAME ...]
 
 positional arguments:
-  NAME        stow dir[s] to the home directory
+  NAME        symlink dir[s]'s files to the home directory
 
 options:
   -h, --help  show this help message and exit
@@ -154,7 +154,7 @@ options:
 usage: doti remove [-h] [-r] NAME [NAME ...]
 
 positional arguments:
-  NAME        unstow dir[s] from the home directory
+  NAME        remove dir[s]'s symlinks from the home directory
 
 options:
   -h, --help  show this help message and exit

@@ -6,33 +6,32 @@ import subprocess
 from os.path import expanduser, isdir
 
 from ..helpers.boolean import is_bool, is_true
-from ..helpers.flatten_list import flatten_list
 
 
 def stow_counter(target_dir, cmd, counter):
     """Update counter for stow/unstow."""
-    if target_dir == "~" and cmd == "stow":
+    if target_dir == "~" and cmd == "add":
         counter[0] += 1
-    elif target_dir == "~" and cmd == "unstow":
+    elif target_dir == "~" and cmd == "remove":
         counter[1] += 1
-    elif target_dir == "/" and cmd == "stow":
+    elif target_dir == "/" and cmd == "add":
         counter[2] += 1
-    elif target_dir == "/" and cmd == "unstow":
+    elif target_dir == "/" and cmd == "remove":
         counter[3] += 1
 
 
 def stow(target_dir, cmd, app, counter, settings):
     """Runs the `stow` command."""
     if not isdir(expanduser(settings["dotfiles_dir"] + "/" + app)):
-        if cmd == "stow":
+        if cmd == "add":
             print(app + " directory not found in " + settings["dotfiles_dir"] + ".")
         counter[4] += 1
         if settings["verbose"]:
             print("[" + target_dir + "] ignored " + app)
     else:
-        if cmd == "stow":
+        if cmd == "add":
             flag = "restow"
-        elif cmd == "unstow":
+        elif cmd == "remove":
             flag = "delete"
         command = [
             "stow",
@@ -54,11 +53,11 @@ def stow(target_dir, cmd, app, counter, settings):
                 stderr=subprocess.DEVNULL,
             )
         except OSError:
-            print("ERROR: Failed to " + cmd + " " + app + "at [" + target_dir + "]")
-            print("       A real file probably exists at target location.")
+            print("ERROR: Failed to " + cmd + " " + app + " to [" + target_dir + "]")
+            print("       A real file[s] probably exists at target location.")
         else:
             if settings["verbose"]:
-                print("[" + target_dir + "] " + cmd + "d " + app)
+                print("[" + target_dir + "] " + cmd + " " + app)
             stow_counter(target_dir, cmd, counter)
 
 
@@ -70,11 +69,11 @@ def stow_from_args(args, counter, settings):
         base_dir = "~"
 
     if args.subcmd == "add":
-        for app in flatten_list(args.stow):
-            stow(base_dir, "stow", app, counter, settings)
+        for app in args.stow:
+            stow(base_dir, "add", app, counter, settings)
     else:
-        for app in flatten_list(args.unstow):
-            stow(base_dir, "unstow", app, counter, settings)
+        for app in args.unstow:
+            stow(base_dir, "remove", app, counter, settings)
 
 
 def stow_from_config(home, root, counter, settings):
@@ -86,9 +85,9 @@ def stow_from_config(home, root, counter, settings):
                     print("[~] ingnored " + app)
                 counter[4] += 1
             elif is_true(home.get(app)):
-                stow("~", "stow", app, counter, settings)
+                stow("~", "add", app, counter, settings)
             else:
-                stow("~", "unstow", app, counter, settings)
+                stow("~", "remove", app, counter, settings)
     if settings["root-only"] or settings["root-enable"]:
         for app in root:
             if not is_bool(root.get(app)):
@@ -96,6 +95,6 @@ def stow_from_config(home, root, counter, settings):
                     print("[/] ingnored " + app)
                 counter[4] += 1
             elif is_true(root.get(app)):
-                stow("/", "stow", app, counter, settings)
+                stow("/", "add", app, counter, settings)
             else:
-                stow("/", "unstow", app, counter, settings)
+                stow("/", "remove", app, counter, settings)

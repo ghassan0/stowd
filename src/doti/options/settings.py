@@ -10,7 +10,7 @@ def get_setting(arg, config_settings, setting):
     """Return the setting (command-line argument > config file > default)"""
     if setting == "dotfiles_dir":
         if arg is not None:
-            return arg
+            return arg[0]
         return dir_path(config_settings.get(setting, "~/dotfiles"))
     if setting in ["verbose", "quiet", "root-enable", "root-only", "simulate"]:
         if arg:

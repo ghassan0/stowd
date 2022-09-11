@@ -13,14 +13,6 @@ def getargs():
     parser = argparse.ArgumentParser(
         description="Symlink dotfiles into their respective directories using `stow`."
     )
-    # parser.add_argument(
-    #     dest="stow",
-    #     nargs="*",
-    #     action="append",
-    #     default=[],
-    #     metavar="NAME",
-    #     help="stow dir[s] to the home directory",
-    # )
     parser.add_argument(
         "-r",
         "--root-enable",
@@ -35,15 +27,6 @@ def getargs():
         action="store_true",
         help="only use root section in config",
     )
-    # parser.add_argument(
-    #     "-p",
-    #     "--platform",
-    #     dest="platform",
-    #     nargs=1,
-    #     type=str,
-    #     metavar="PLATFORM",
-    #     help="platform(section) in config to use",
-    # )
     parser.add_argument(
         "-c",
         "--config",
@@ -100,7 +83,7 @@ def getargs():
         dest="stow",
         nargs="+",
         metavar="NAME",
-        help="stow dir[s] to the home directory",
+        help="symlink dir[s]'s files to the home directory",
     )
     stow_sub_parser.add_argument(
         "-r",
@@ -115,7 +98,7 @@ def getargs():
         dest="unstow",
         nargs="+",
         metavar="NAME",
-        help="unstow dir[s] from the home directory",
+        help="remove dir[s]'s symlinks from the home directory",
     )
     unstow_sub_parser.add_argument(
         "-r",
@@ -126,5 +109,4 @@ def getargs():
     )
 
     args = parser.parse_args()
-    print(args)
     return args

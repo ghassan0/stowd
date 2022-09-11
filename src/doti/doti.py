@@ -14,7 +14,7 @@ from .stow.stow_exists import stow_exists
 
 
 def main() -> None:
-    """Stow/unstow dotfiles to home/root directories."""
+    """Add/remove symlinks of your dotfiles to the home/root directories."""
     # parse command line arguments
     args = getargs()
 
