@@ -15,8 +15,8 @@ def getargs():
     )
     parser.add_argument(
         "-r",
-        "--root-enable",
-        dest="root_enable",
+        "--root-disable",
+        dest="root_disable",
         action="store_true",
         help="enable root section in config",
     )

@@ -11,6 +11,6 @@ else:
     import importlib_metadata as metadata
 
 
-__version__ = metadata.version("doti")
 __project__ = "doti"
+__version__ = metadata.version(__project__)
 __config_file__ = __project__ + ".cfg"

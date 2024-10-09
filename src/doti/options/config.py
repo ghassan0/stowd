@@ -1,5 +1,5 @@
 """
-Parse configuration file (doti.cfg).
+Parse doti configuration file (doti.cfg).
 """
 
 import configparser
@@ -8,45 +8,37 @@ from os.path import expanduser, isfile
 
 from ..helpers.boolean import is_true
 from ..helpers.metadata import __config_file__, __project__
-from ..helpers.system import get_hostname, get_system
+from ..helpers.system import get_hostname, get_distro, get_platform
 
 DEFAULT_SECTION = "LEAVE_THIS_SECTION_EMPTY"
 
 
 def get_config_file(args_config_file, args_dotfiles_dir):
     """Reads and returns config from file."""
-    config_subpath = "/" + __project__ + "/" + __config_file__
-    default_config_path = ".config" + config_subpath
-    dotfiles_config_path = __project__ + "/" + default_config_path
 
     if args_config_file is not None:
-        config_file = args_config_file[0]
-    elif "XDG_CONFIG_HOME" in environ and isfile(
-        expanduser(environ["XDG_CONFIG_HOME"] + config_subpath)
-    ):
-        config_file = expanduser(environ["XDG_CONFIG_HOME"] + config_subpath)
-    elif isfile(expanduser("~/" + default_config_path)):
-        config_file = expanduser("~/" + default_config_path)
-    elif args_dotfiles_dir is not None:
-        dotfiles_dir = args_dotfiles_dir[0]
-        if isfile(dotfiles_dir + "/" + dotfiles_config_path):
-            config_file = dotfiles_dir + "/" + dotfiles_config_path
-    elif isfile(expanduser("~/.dotfiles/" + dotfiles_config_path)):
-        config_file = expanduser("~/.dotfiles/" + dotfiles_config_path)
-    elif isfile(expanduser("~/dotfiles/" + dotfiles_config_path)):
-        config_file = expanduser("~/dotfiles/" + dotfiles_config_path)
+        if isfile(args_config_file[0]):
+            config_file = args_config_file[0]
+    elif isfile("./" + __config_file__):
+        config_file = "./" + __config_file__
+    elif isfile("./" + __project__ + "/" + __config_file__):
+        config_file = "./" + __project__ + "/" + __config_file__
 
-    if "config_file" not in locals():
-        raise FileNotFoundError(
-            "Config file not found in `$XDG_CONFIG_HOME"
-            + config_subpath
-            + "` or `~/"
-            + default_config_path
-            + "`"
-        )
+    try:
+        if "config_file" not in locals():
+            raise FileNotFoundError()
+    except FileNotFoundError:
+        print("Error: doti config file not found")
+        exit(1)
 
     config = configparser.ConfigParser(default_section=DEFAULT_SECTION)
-    config.read(config_file)
+
+    try:
+        config.read(config_file)
+    except configparser.DuplicateSectionError:
+        print("Error: Avoid duplicate sections in \"" + config_file + "\"")
+        exit(1)
+
     return config
 
 
@@ -68,15 +60,22 @@ def get_config_section(config, suffix):
     ):
         return section_hostname
 
-    section_system = get_section(config, get_system() + "-" + suffix)
-    settings_system = get_section(config, get_system() + "-settings")
-    if (inherit_flag in settings_system) and (
-        not is_true(settings_system[inherit_flag])
+    section_distro = get_section(config, get_distro() + "-" + suffix)
+    settings_distro = get_section(config, get_distro() + "-settings")
+    if inherit_flag in settings_distro and (
+        not is_true(settings_distro[inherit_flag])
     ):
-        return section_system | section_hostname
+        return section_distro | section_hostname
+
+    section_platform = get_section(config, get_platform() + "-" + suffix)
+    settings_platform = get_section(config, get_platform() + "-settings")
+    if (inherit_flag in settings_platform) and (
+        not is_true(settings_platform[inherit_flag])
+    ):
+        return section_platform | section_distro | section_hostname
 
     section_general = get_section(config, suffix)
-    return section_general | section_system | section_hostname
+    return section_general | section_platform | section_distro | section_hostname
 
 
 def get_config(args_config_file, args_dotfiles_dir):

@@ -6,5 +6,8 @@ from shutil import which
 
 def stow_exists():
     """Ensure `stow` exists."""
-    if not which("stow"):
-        Exception("Please install `stow` then try again.")
+    try:
+        if not which("stow"):
+            raise Exception("Program not installed")
+    except Exception:
+        print("Please install `stow` then try again.")

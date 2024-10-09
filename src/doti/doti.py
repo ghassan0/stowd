@@ -31,7 +31,7 @@ def main() -> None:
     if settings["simulate"]:
         print("Simulation mode: no filesystem modifications")
 
-    counter = [0] * 5
+    counter = [0] * 6
     if args.subcmd in ("add", "remove"):
         # [un]stow[-root] from command line arguments
         stow_from_args(args, counter, settings)

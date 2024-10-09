@@ -18,6 +18,10 @@ def stow_counter(target_dir, cmd, counter):
         counter[2] += 1
     elif target_dir == "/" and cmd == "remove":
         counter[3] += 1
+    elif cmd == "ignore":
+        counter[4] += 1
+    elif cmd == "error":
+        counter[5] += 1
 
 
 def stow(target_dir, cmd, app, counter, settings):
@@ -25,26 +29,32 @@ def stow(target_dir, cmd, app, counter, settings):
     if not isdir(expanduser(settings["dotfiles_dir"] + "/" + app)):
         if cmd == "add":
             print(app + " directory not found in " + settings["dotfiles_dir"] + ".")
-        counter[4] += 1
+        stow_counter(target_dir, "ignore", counter)
         if settings["verbose"]:
-            print("[" + target_dir + "] ignored " + app)
+            print("Ignored " + app + "config files")
     else:
         if cmd == "add":
             flag = "restow"
+            preposition = "to"
+            cmd_past_tense = "Added"
         elif cmd == "remove":
             flag = "delete"
+            preposition = "from"
+            cmd_past_tense = "Removed"
         command = [
             "stow",
+            "--simulate",
             "--no-folding",
             "--dir=" + expanduser(settings["dotfiles_dir"]),
             "--target=" + expanduser(target_dir),
             "--" + flag,
             app,
         ]
-        if settings["simulate"]:
-            command.insert(1, "--simulate")
         if target_dir == "/":
             command.insert(0, "sudo")
+            target_dir_name = "root"
+        else: 
+            target_dir_name = "home"
         try:
             subprocess.run(
                 command,
@@ -52,13 +62,29 @@ def stow(target_dir, cmd, app, counter, settings):
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
-        except OSError:
-            print("ERROR: Failed to " + cmd + " " + app + " to [" + target_dir + "]")
+        except subprocess.CalledProcessError:
+            print("ERROR: Failed to " + cmd + " " + app + " config file(s) " + preposition + " the " + target_dir_name + " directory")
             print("       A real file[s] probably exists at target location.")
+            stow_counter(target_dir, "error", counter)
         else:
+            if not settings["simulate"]:
+                command.remove("--simulate")
+                try:
+                    subprocess.run(
+                        command,
+                        check=True,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                    )
+                except subprocess.CalledProcessError:
+                    print("ERROR: Unknown error using the 'stow' command]")
+                    stow_counter(target_dir, "error", counter)
+                else:
+                    stow_counter(target_dir, cmd, counter)
+            else:
+                stow_counter(target_dir, cmd, counter)
             if settings["verbose"]:
-                print("[" + target_dir + "] " + cmd + " " + app)
-            stow_counter(target_dir, cmd, counter)
+                print(cmd_past_tense + " " + app + " config files " + preposition + " the " + target_dir_name + " directory")
 
 
 def stow_from_args(args, counter, settings):
@@ -82,18 +108,18 @@ def stow_from_config(home, root, counter, settings):
         for app in home:
             if not is_bool(home.get(app)):
                 if settings["verbose"]:
-                    print("[~] ingnored " + app)
-                counter[4] += 1
+                    print("Ignored " + app + "config files for the home directory")
+                stow_counter("~", "ignore", counter)
             elif is_true(home.get(app)):
                 stow("~", "add", app, counter, settings)
             else:
                 stow("~", "remove", app, counter, settings)
-    if settings["root-only"] or settings["root-enable"]:
+    if settings["root-only"] or not settings["root-disable"]:
         for app in root:
             if not is_bool(root.get(app)):
                 if settings["verbose"]:
-                    print("[/] ingnored " + app)
-                counter[4] += 1
+                    print("Ignored " + app + "config files for the root directory")
+                stow_counter("/", "ignore", counter)
             elif is_true(root.get(app)):
                 stow("/", "add", app, counter, settings)
             else:

@@ -2,7 +2,7 @@
 Return all settings (command-line argument > config file > default)
 """
 
-from ..helpers.boolean import is_true
+from ..helpers.boolean import is_true, is_false
 from ..helpers.path import dir_path
 
 
@@ -11,11 +11,15 @@ def get_setting(arg, config_settings, setting):
     if setting == "dotfiles_dir":
         if arg is not None:
             return arg[0]
-        return dir_path(config_settings.get(setting, "~/dotfiles"))
-    if setting in ["verbose", "quiet", "root-enable", "root-only", "simulate"]:
+        return dir_path(config_settings.get(setting, "."))
+    if setting in ["verbose", "quiet", "root-only", "simulate"]:
         if arg:
             return arg
         return is_true(config_settings.get(setting, "false"))
+    if setting in ["root-disable"]:
+        if arg:
+            return arg
+        return is_false(config_settings.get(setting, "true"))
     return arg
 
 
@@ -27,8 +31,8 @@ def get_settings(args, config_settings):
     )
     settings["verbose"] = get_setting(args.verbose, config_settings, "verbose")
     settings["quiet"] = get_setting(args.quiet, config_settings, "quiet")
-    settings["root-enable"] = get_setting(
-        args.root_enable, config_settings, "root-enable"
+    settings["root-disable"] = get_setting(
+        args.root_disable, config_settings, "root-disable"
     )
     settings["root-only"] = get_setting(args.root_only, config_settings, "root-only")
     settings["simulate"] = get_setting(args.simulate, config_settings, "simulate")

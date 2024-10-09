@@ -10,15 +10,12 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ### Fixed
 
 - Remove requirement for config file if the --dotfiles_dir flag is used along with the add/remove subcommand
-- Handle invalid config file (duplicate sections, etc.)
+- Handle invalid config file (other than duplicate sections)
 
 ### Added
 
 - Add ignore setting and flag to ignore files ending in this Perl regex.
-- Add 'git clone' functionality to setup dotfiles repo on new device
 - Return `platform` flag functionality and rename to `section`
-- Add flag to disable inheriting from parent section (hostname - system - general)
-- Consider adding Distro section (hostname - distro - system - general)
 
 ### Changed
 

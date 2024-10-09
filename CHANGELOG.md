@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Handle invalid config file (duplicate sections)
+
+### Added
+
+- Look for `doti.cfg` in current directory or in `doti` folder within current directory
+- Add an `ignore` and an `error` counter
+- New Distro section (hostname - distro - system - general)
+
+### Changed
+
+- Default to enable root and substitute `root-enable` flag to `root-disable`
+- Make each program add/remove operation atomic. Only allow changes to be made if no errors occur for that program 
+
+### Deprecated
+
+- Removed looking for `doti.cfg` in `XDA_CONFIG_HOME`
+
 ## [0.3.1] - 2022-09-11
 
 ### Fixed
@@ -108,11 +127,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New Github actions to auto package and release to Github and PyPI
 - New Github action to update CHANGELOG after release
 
-[unreleased]: https://github.com/ghassan0/stowd/compare/v0.3.1...HEAD
-[0.3.1]: https://github.com/ghassan0/stowd/compare/v0.3.0...v0.3.1
-[0.3.0]: https://github.com/ghassan0/stowd/compare/v0.2.1...v0.3.0
-[0.2.1]: https://github.com/ghassan0/stowd/compare/v0.2.0...v0.2.1
-[0.2.0]: https://github.com/ghassan0/stowd/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/ghassan0/stowd/compare/v0.0.2...v0.1.0
-[0.0.2]: https://github.com/ghassan0/stowd/compare/v0.0.1...v0.0.2
-[0.0.1]: https://github.com/ghassan0/stowd/releases/tag/v0.0.1
+[unreleased]: https://github.com/alduraibi/stowd/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/alduraibi/stowd/compare/v0.3.1...v0.4.0
+[0.3.1]: https://github.com/alduraibi/stowd/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/alduraibi/stowd/compare/v0.2.1...v0.3.0
+[0.2.1]: https://github.com/alduraibi/stowd/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/alduraibi/stowd/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/alduraibi/stowd/compare/v0.0.2...v0.1.0
+[0.0.2]: https://github.com/alduraibi/stowd/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/alduraibi/stowd/releases/tag/v0.0.1
