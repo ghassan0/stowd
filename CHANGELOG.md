@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2024-10-09
+
 ### Fixed
 
 - Handle invalid config file (duplicate sections)
@@ -20,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Default to enable root and substitute `root-enable` flag to `root-disable`
-- Make each program add/remove operation atomic. Only allow changes to be made if no errors occur for that program 
+- Make each program add/remove operation atomic. Only allow changes to be made if no errors occur for that program
 
 ### Deprecated
 
