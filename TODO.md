@@ -16,6 +16,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 - Add ignore setting and flag to ignore files ending in this Perl regex.
 - Return `platform` flag functionality and rename to `section`
+- Create arg to get system information (hostname, distro, platform)
 
 ### Changed
 

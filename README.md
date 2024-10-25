@@ -21,7 +21,7 @@ Features:
 - Use same directory structure as can be seen from the `home` (`~`) or `root` (`/`) directories within the application's own directory.
 - Symlink configs so we can edit directly from the dotfiles directory instead of trying to hunt the config files down.
 - Both `home` and `root` configs supported.
-- Hostname-specific, system-specific, and general configs
+- Hostname-specific, distro-specific, system-specific, and general configs
 - Supports Linux, Termux, OSX, OpenBSD, FreeBSD, and Cygwin.
 - Non-root installation using `pip`.
 
@@ -36,6 +36,14 @@ Requirements: `stow`
 ```
 # Cross-Platform (pip)
 pip install doti
+
+# or
+
+# Cross-Platform (pip with venv) [recommended over just pip]
+cd ~/.dotfiles                # cd into your dotfiles directory
+python -m venv .venv          # create python virtual environent
+source .venv/bin/activate     # activate venv
+python -m pip install doti    # install doti
 
 # or
 
@@ -54,20 +62,26 @@ Within each sub-directory organize that programs config files as they appear fro
 ```
 .
 ├── doti
+│   └── doti.cfg
+├── bat
 │   └── .config
-│       └── doti
-│           └── doti.cfg
+│       └── bat
+│           └── config
 ├── dircolors
 │   └── .config
 │       └── dircolors
 │           └── .dir_colors
+├── electron
+│   └── .config
+│       └── electron-flags.conf
 ├── env_root
 │   └── etc
 │       └── environment
 ├── git
 │   └── .config
 │       └── git
-│           └── config
+│           ├── config
+│           └── ignore
 ├── gtk
 │   └── .config
 │       ├── gtk-2.0
@@ -75,14 +89,23 @@ Within each sub-directory organize that programs config files as they appear fro
 │       └── gtk-3.0
 │           ├── gtk.css
 │           └── settings.ini
+├── neovim
+│   └── .config
+│       └── nvim
+│           └── init.lua
 ├── termux
 │   └── .termux
 │       ├── colors.properties
 │       └── termux.properties
-├── tty
+├── pacman
 │   └── etc
 │       ├── issue
-│       └── profile
+│       └── pacman.conf
+├── tmux
+│   └── .config
+│       └── tmux.conf
+├── vim
+│   └── .vimrc
 └── zsh
     ├── .config
     │   └── zsh
@@ -115,7 +138,7 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  -r, --root-enable     enable root section in config
+  -r, --root-disable    disable root section in config
   -R, --root-only       only use root section in config
   -c FILE, --config FILE
                         path to config file (doti.cfg)

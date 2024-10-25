@@ -18,7 +18,7 @@ def getargs():
         "--root-disable",
         dest="root_disable",
         action="store_true",
-        help="enable root section in config",
+        help="disable root section in config",
     )
     parser.add_argument(
         "-R",
@@ -57,7 +57,7 @@ def getargs():
         "--quiet",
         dest="quiet",
         action="store_true",
-        help="supress output",
+        help="suppress output",
     )
     parser.add_argument(
         "-n",
